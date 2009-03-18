@@ -1,0 +1,61 @@
+<script type="text/javascript" src="jquery-1.3.2.js"></script>
+<script type="text/javascript" src="hexify.js"></script>
+<script type="text/javascript" src="VISCA.js"></script>
+<script type="text/javascript" src="ramune.js"></script>
+<script type="text/javascript" charset="utf-8">
+	$(document).keyup(function(event){
+		switch (event.keyCode) {
+			case 37: // LEFT KEY
+			case 38: // UP KEY
+			case 39: // RIGHT KEY
+			case 40: // DOWN KEY
+				cameraCommand('MOVE_STOP');
+				break;
+			case 188: // '<' KEY
+			case 190: // '>' KEY
+				cameraCommand('ZOOM_STOP');
+				break;
+			default:
+				break;
+		}
+	});
+	
+	$(document).keydown(function(event){
+		switch (event.keyCode) {
+			case 37: // LEFT KEY
+				cameraCommand('MOVE_LEFT');
+				break;
+			case 38: // UP KEY
+				cameraCommand('MOVE_UP');
+				break;
+			case 39: // RIGHT KEY
+				cameraCommand('MOVE_RIGHT');
+				break;
+			case 40: // DOWN KEY
+				cameraCommand('MOVE_DOWN');
+				break;
+			case 188: // '<' KEY
+				cameraCommand('ZOOM_OUT');
+				break;
+			case 190: // '>' KEY
+				cameraCommand('ZOOM_IN');
+				break;
+			default:
+				break;
+		}
+	});
+
+	$(document).ready(function() {
+		alert("Ready");
+	});
+</script>
+
+<a onmousedown="cameraCommand('MOVE_UP')" onmouseup="cameraCommand('MOVE_STOP')" href="#">UP!</a>
+<a onmousedown="cameraCommand('MOVE_DOWN')" onmouseup="cameraCommand('MOVE_STOP')" href="#">DOWN!</a>
+<a onmousedown="cameraCommand('MOVE_LEFT')" onmouseup="cameraCommand('MOVE_STOP')" href="#">LEFT!</a>
+<a onmousedown="cameraCommand('MOVE_RIGHT')" onmouseup="cameraCommand('MOVE_STOP')" href="#">RIGHT!</a>
+<a onmousedown="cameraCommand('MOVE_HOME')" onmouseup="cameraCommand('MOVE_STOP')" href="#">HOME!</a>
+<a onclick="cameraCommand('MOVE_STOP')" href="#">STOP!</a>
+<a onmousedown="cameraCommand('ZOOM_IN')" onmouseup="cameraCommand('ZOOM_STOP')" href="#">Zoom IN!</a>
+<a onmousedown="cameraCommand('ZOOM_OUT')" onmouseup="cameraCommand('ZOOM_STOP')" href="#">Zoom OUT!</a>
+<a onclick="cameraCommand('ZOOM_STOP')" href="#">Zoom STOP!</a>
