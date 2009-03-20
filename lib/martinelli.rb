@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'mongrel'
 require 'logger'
-require 'rbconfig' # for knowing OS
+#require 'rbconfig' # for knowing OS
 require 'json'
 
 require 'martinelli/SerialDevice'
@@ -17,13 +17,16 @@ module Martinelli
   $log.datetime_format = "%H:%M:%S"
 
   #
-  # The WENDI RESTful Web Service
+  # The WENDI Mostly-RESTful Web Service
   #
   class SerialDeviceWebServer
 
     def initialize(host = "0.0.0.0", port = 5000)
       
       @server = Mongrel::HttpServer.new(host, port)
+      
+      # FIXME: Hack for first release purposes
+      #@server.register("/", Mongrel::DirHandler.new("public/bin-debug", false))
       
       @device = SerialDeviceHandler.new
       @server.register("/resources/devices", @device)
@@ -90,23 +93,54 @@ module Martinelli
     def process(request, response)
       preprocess(request, response)
       
+      response_code = 500
+      content_type = "text/plain"
+      response_content = "500"
+      
       begin
-        response.start(200) do |head, out|
-          # INPUT
-          body = request.body.string
-          $log.debug("BODY: " + body)
-          data = hexify(body) # FIXME: ask me what i need please
-          
-          # OUTPUT
-          head["Content-Type"] = "text/plain"
-          #@device.write(data)
-          out << "OK"
+        
+        device = nil
+        if @serial_devices.has_key? @parsed_request_path.last
+          device = @serial_devices[@parsed_request_path.last]
+        end
+        if (device.nil?) then
+          response_code = 404
+          response_content = "404 NOT FOUND"
+        else
+          device = @serial_devices[@parsed_request_path.last]
+          case @request_method
+          when 'GET'
+            response_code = 200
+            response_content = "200"
+          when 'HEAD'
+            response_code = 501
+            response_content = "501 ERROR"
+          when 'PUT'
+            response_code = 501
+            response_content = "501 ERROR"
+          when 'POST'
+            if (@body != nil && @body != "") then
+              device.write(hexify(@body))
+            end
+            response_code = 200
+            response_content = "200 OK"
+          when 'DELETE'
+            response_code = 501
+            response_content = "501 ERROR"
+          else
+            raise "Not a valid HTTP 1.1 REQUEST_METHOD"
+          end
         end
       rescue Exception => e
-        response.start(500) do |head, out|
-          head["Content-Type"] = "text/plain"
-          out << "500: " + e
-        end
+        response_code = 500
+        content_type = "text/plain"
+        response_content = "500"
+        $log.error(e)
+      end
+      
+      response.start(response_code) do |head, out|
+        head["Content-Type"] = @content_type
+        out << response_content
       end
     end
   end

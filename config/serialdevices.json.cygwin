@@ -3,7 +3,7 @@
 		"name": "ptzcamera",
 		"format": "HEX",
 		"delimiter": "FF",
-		"port": "\/dev\/tty.usbserial",
+		"port": "\/dev\/ttyS4",
 		"baud": 9600,
 		"stopBits": 1,
 		"parityBits": 0
@@ -12,7 +12,7 @@
 		"name": "videoswitch",
 		"format": "HEX",
 		"length": 4,
-		"port": "\/dev\/tty.usbserial32",
+		"port": "\/dev\/ttyS5",
 		"baud": 9600,
 		"stopBits": 1,
 		"parityBits": 0

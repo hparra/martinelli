@@ -38,13 +38,23 @@ function cameraCommand(str) {
 			break;
 		
 	}
-	WENDICall("blah", VISCA.command(1, subcommand));
+	WENDICall("/resources/devices/ptzcamera", VISCA.command(1, subcommand));
+}
+
+/**
+ * Sends command to WENDI Server to switch S-Video Input
+ *
+ * @param string one-digit hexadecimal number
+ */
+function videoswitchCommand(str) {
+	// TODO: Error checking. [1-F]
+	WENDICall("/resources/devices/videoswitch", "01 8" + str + "81 81");
 }
 
 function WENDICall(resource, body) {
 	$.ajax({
 		type: "POST",
-		url: "http://localhost:5000/resources/devices",
+		url: "http://localhost:5000" + resource, // HACK: For non-served html testing
 		//processData: false,
 		data: body,
 		dataType: "text",
