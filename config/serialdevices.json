@@ -1,0 +1,20 @@
+{
+	"ptzcamera": {
+		"name": "ptzcamera",
+		"format": "HEX",
+		"delimiter": "FF",
+		"port": "\/dev\/tty.usbserial",
+		"baud": 9600,
+		"stopBits": 1,
+		"parityBits": 0
+	},
+	"videoswitch": {
+		"name": "videoswitch",
+		"format": "HEX",
+		"length": 4,
+		"port": "\/dev\/tty.usbserial30",
+		"baud": 9600,
+		"stopBits": 1,
+		"parityBits": 0
+	}
+}

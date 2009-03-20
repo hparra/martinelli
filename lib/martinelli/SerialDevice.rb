@@ -26,13 +26,14 @@ module Martinelli
     # constructor
     #
     def initialize(port, baud_rate, data_bits = 8, stop_bits = 1, parity = SerialPort::NONE)
+      # TODO: Check sanity of params
       @port = port
       @baud_rate = baud_rate
       @data_bits = data_bits
       @stop_bits = stop_bits
       @parity = parity
       @serial_port = nil
-      $log.debug("initialized")
+      #$log.debug("initialized")
     end
   
     # open connection to device

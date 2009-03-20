@@ -12,6 +12,8 @@ end
 UP = hexify("8101060101050301FF")
 DOWN = hexify("8101060101050302FF")
 STOP = hexify("8101060101010303FF")
+IN1 = hexify("01818181")
+IN2 = hexify("01828181")
 
 $log = Logger.new(STDOUT)
 $log.level = Logger::DEBUG
@@ -29,10 +31,10 @@ begin
 		end
 		while (s = tty.getc) do							  # while there is input
       case s.chr
-      when 'U'
-        @device.write(UP)
-      when 'D'
-        @device.write(DOWN)
+      when '1'
+        @device.write(IN1)
+      when '2'
+        @device.write(IN2)
       end
 		end
 	end
