@@ -5,33 +5,25 @@ require 'serialport' # git://github.com/toholio/ruby-serialport.git
 
 module Martinelli
 
-  
-
-
-  #
-  #
-  #
   class SerialDevice
   
-    #UP = hexify("8101060101050301FF")
-    #DOWN = hexify("8101060101050302FF")
-    #STOP = hexify("8101060101010303FF")
-  
-    #def hexify(s)
-    #  h = ""
-    #  s.scan(/../).each { | tuple | h += tuple.hex.chr }
-    #  return h
-    #end
+    attr_reader :buffer
+    attr_reader :style
+    #attr_reader :delimeter
   
     # constructor
     #
-    def initialize(port, baud_rate, data_bits = 8, stop_bits = 1, parity = SerialPort::NONE)
+    def initialize(port, baud_rate, data_bits, stop_bits, parity, style)
       # TODO: Check sanity of params
       @port = port
       @baud_rate = baud_rate
       @data_bits = data_bits
       @stop_bits = stop_bits
       @parity = parity
+      @style = style
+      
+      @buffer = "EMPTY"
+      @listener = nil
       @serial_port = nil
       #$log.debug("initialized")
     end
@@ -77,8 +69,36 @@ module Martinelli
       end
     end
     
+    # Threaded to do who knows what!
+    def listen
+      if (@listener.nil?)
+        @listener = Thread.new do
+          loop do
+            @buffer = @serial_port.gets
+          end
+        end
+        @listener.run
+      end
+    end
+    
+    def listening?
+      return !@listener.nil?
+    end
+    
+    def deaf
+      if (@listener)
+        @listener.exit
+        @listener = null
+      end
+    end
+    
     def flush
       @serial_port.flush()
+    end
+    
+    def post(s)
+      @serial_port.write(s)
+      return @serial_port.gets
     end
     
     # writes a string

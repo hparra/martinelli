@@ -1,6 +1,7 @@
 {
 	"ptzcamera": {
 		"name": "ptzcamera",
+		"style": "INPUT",
 		"format": "HEX",
 		"delimiter": "FF",
 		"port": "\/dev\/tty.usbserial",
@@ -10,10 +11,31 @@
 	},
 	"videoswitch": {
 		"name": "videoswitch",
+		"style": "INPUT",
 		"format": "HEX",
 		"length": 4,
-		"port": "\/dev\/tty.usbserial32",
+		"port": "\/dev\/tty.usbserial4",
 		"baud": 9600,
+		"stopBits": 1,
+		"parityBits": 0
+	},
+	"accelerometer": {
+		"name": "accelerometer",
+		"style": "LISTEN",
+		"format": "ASCII",
+		"delimiter": "\r\n",
+		"port": "\/dev\/tty.usbserial-A8003VSz",
+		"baud": 2400,
+		"stopBits": 1,
+		"parityBits": 0
+	},
+	"scale": {
+		"name": "scale",
+		"style": "LISTEN",
+		"format": "ASCII",
+		"delimiter": "\r\n",
+		"port": "\/dev\/tty.usbserial-A8003WbS",
+		"baud": 2400,
 		"stopBits": 1,
 		"parityBits": 0
 	}

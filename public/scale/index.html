@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<style type="text/css" media="all">
+			body {
+				margin: 0px;
+				padding: 0px;
+				background-image: url("WeightScale.png");
+				background-position: top center;
+				background-repeat: no-repeat;
+			}
+			
+			#data {
+				position: absolute;
+				left: 50%;
+				top: 180px;
+				height: 300px;
+				line-height: 300px;
+				text-align: center;
+				font-size: 230px;
+				font-family: arial, "lucida console", sans-serif;
+				width: 400px;
+				margin-left: -217px; /* scale in picture not in center */
+				/*border: solid 2px black;*/
+				color: black;
+				font-weight: bold;
+			}
+			
+			#data_units {
+				position: absolute;
+				left: 50%;
+				top: 450px;
+				height: 80px;
+				line-height: 80px;
+				text-align: center;
+				font-size: 80px;
+				font-family: arial, "lucida console", sans-serif;
+				width: 100px;
+				margin-left: -70px; /* scale in picture not in center */
+				/*border: solid 2px black;*/
+				color: black;
+			}
+			
+			#back_button {
+				float:right;
+				color: black;
+				text-decoration: none;
+				font-family: arial, "lucida console", sans-serif;
+				font-size: 48px;
+				line-height: 100px;
+				margin-right: 20px;
+			}
+		</style>
+		<title>HBOX</title>
+		<script src="jquery-1.3.2.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$.ajax({
+					type: "POST",
+					url: "/devices/scale",
+					data: "S",
+					success: function (data, status) {
+						alert("ready?");
+				    	infinitePoll();
+					}
+				});
+			});
+			
+			function infinitePoll() {
+				$.ajax({
+					type: "GET",
+					url: "/devices/scale",
+					success: function(data, status) {
+				    	$('#data').html(data);
+						infinitePoll();
+					}
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<div id="data">
+			:(
+		</div>
+		<div id="data_units">
+			lbs
+		</div>
+	</body>
+</html>

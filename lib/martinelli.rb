@@ -25,11 +25,11 @@ module Martinelli
       
       @server = Mongrel::HttpServer.new(host, port)
       
-      # FIXME: Hack for first release purposes
-      #@server.register("/", Mongrel::DirHandler.new("public/bin-debug", false))
+      # FIXME: For interface testing
+      @server.register("/apps", Mongrel::DirHandler.new("public", false))
       
       @device = SerialDeviceHandler.new
-      @server.register("/resources/devices", @device)
+      @server.register("/devices", @device)
       
     end
 
@@ -66,9 +66,15 @@ module Martinelli
         $log.debug(i)
         begin
           serial_device_name = i[0]
-          serial_device = SerialDevice.new(i[1]["port"], i[1]["baud"], i[1]["dataBits"], i[1]["stopBits"])
+          serial_device = SerialDevice.new(i[1]["port"], i[1]["baud"], i[1]["dataBits"], i[1]["stopBits"], i[1]["parityBits"], i[1]["style"])
           serial_device.open # TODO Error Checking!
+          
+          if (serial_device.style == "LISTEN")
+            serial_device.listen # thread
+          end
+          
           @serial_devices[serial_device_name] = serial_device
+          
           $log.info("\"" + serial_device_name + "\" initialized!")
         rescue Errno::ENOENT => e # device doesn't exist
           $log.error(serial_device_name + ": " + i[1]["port"] + " does not exist!")
@@ -97,6 +103,7 @@ module Martinelli
       content_type = "text/plain"
       response_content = "500"
       
+      # FIXME: Design won't work if we want to stream data
       begin
         
         device = nil
@@ -111,7 +118,8 @@ module Martinelli
           case @request_method
           when 'GET'
             response_code = 200
-            response_content = "200"
+            # FIXME: Sending just buffer now. This should send all info. Whatever that means.
+            response_content = device.buffer
           when 'HEAD'
             response_code = 501
             response_content = "501 ERROR"
@@ -120,10 +128,17 @@ module Martinelli
             response_content = "501 ERROR"
           when 'POST'
             if (@body != nil && @body != "") then
-              device.write(hexify(@body))
+              
+              if (@body == "S")
+                device.write('S')
+                response_content = "LISTEN: 200 OK"
+              else
+                device.write(hexify(@body))
+                response_content = "200 OK"
+              end
+              
             end
             response_code = 200
-            response_content = "200 OK"
           when 'DELETE'
             response_code = 501
             response_content = "501 ERROR"

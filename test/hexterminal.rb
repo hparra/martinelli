@@ -29,14 +29,14 @@ begin
 		tty.sync = true													# flush output immediately
 		Thread.new do
 			loop do
-			  sleep (0.1)
+			  #sleep (0.1)
 		  	#tty.printf("%X", sp.getc)						# output data
-		  	#tty.printf("%c", sp.getc)
+		  	tty.printf("%s", sp.gets)
 			end
 		end
 		while (s = tty.gets) do 								# while there is input
-			#sp.write(s.sub("\n", "\r"))						# send line
-			s.scan(/../).each { | tuple | sp.putc tuple.hex.chr }
+			sp.write(s.sub("\n", "\r"))						# send line
+			#s.scan(/../).each { | tuple | sp.putc tuple.hex.chr }
 		end
 	end
 rescue Interrupt														# catch ctrl-c
