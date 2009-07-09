@@ -78,6 +78,18 @@
 					}
 				});
 			}
+			
+			function infinitePollP() {
+				$.ajax({
+					type: "GET",
+					dataType: "jsonp",
+					url: "/devices/scale",
+					success: function(data, status) {
+				    	$('#data').html(data);
+						infinitePoll();
+					}
+				});
+			}
 		</script>
 	</head>
 	<body>

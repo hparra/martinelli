@@ -17,7 +17,7 @@ module Martinelli
   $log.datetime_format = "%H:%M:%S"
 
   #
-  # The WENDI Mostly-RESTful Web Service
+  # The WENDI Web Service
   #
   class SerialDeviceWebServer
 
@@ -96,36 +96,45 @@ module Martinelli
       return s
     end
     
+    #
+    # PROCESS
+    #
     def process(request, response)
-      preprocess(request, response)
       
-      response_code = 500
+      request, response = preprocess(request, response)
+      
+      # defaults
       content_type = "text/plain"
+      response_code = 500
       response_content = "500"
       
       # FIXME: Design won't work if we want to stream data
       begin
         
         device = nil
-        if @serial_devices.has_key? @parsed_request_path.last
+        if @serial_devices.has_key?(@parsed_request_path.last)
           device = @serial_devices[@parsed_request_path.last]
         end
+        
         if (device.nil?) then
           response_code = 404
           response_content = "404 NOT FOUND"
         else
-          device = @serial_devices[@parsed_request_path.last]
-          case @request_method
-          when 'GET'
-            response_code = 200
-            # FIXME: Sending just buffer now. This should send all info. Whatever that means.
-            response_content = device.buffer
-          when 'HEAD'
-            response_code = 501
-            response_content = "501 ERROR"
-          when 'PUT'
-            response_code = 501
-            response_content = "501 ERROR"
+          device = @serial_devices[@parsed_request_path.last] # again?
+          
+          case (@request_method)
+          when 'GET'          
+            if (@data_type == JSONP) then
+              callback = @params['callback']
+              content_type = "application/json"
+              response_code = 200
+              response_content = "#{callback}({data: #{device.buffer}})"
+            else
+              content_type = "text/plain"
+              response_code = 200
+              response_content = device.buffer
+            end
+            
           when 'POST'
             if (@body != nil && @body != "") then
               
@@ -139,6 +148,12 @@ module Martinelli
               
             end
             response_code = 200
+          when 'HEAD'
+            response_code = 501
+            response_content = "501 ERROR"
+          when 'PUT'
+            response_code = 501
+            response_content = "501 ERROR"
           when 'DELETE'
             response_code = 501
             response_content = "501 ERROR"
@@ -147,14 +162,14 @@ module Martinelli
           end
         end
       rescue Exception => e
-        response_code = 500
         content_type = "text/plain"
+        response_code = 500
         response_content = "500"
         $log.error(e)
       end
       
       response.start(response_code) do |head, out|
-        head["Content-Type"] = @content_type
+        head["Content-Type"] = content_type
         out << response_content
       end
     end
