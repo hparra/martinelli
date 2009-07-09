@@ -27,28 +27,32 @@
 		<title>HBOX</title>
 		<script src="jquery-1.3.2.js"></script>
 		<script type="text/javascript">
+			var DOMAIN = "http://vath.calit2.uci.edu:5000";
+		
 			$(document).ready(function () {
-				$.ajax({
-					type: "POST",
-					url: "/devices/accelerometer",
-					data: "S",
-					success: function (data, status) {
-						alert("ready?");
-				    	infinitePoll();
-					}
-				});
+				infinitePollP();
 			});
 			
 			function infinitePoll() {
 				$.ajax({
 					type: "GET",
-					url: "/devices/accelerometer",
+					url: DOMAIN + "/devices/accelerometer",
 					success: function(data, status) {
 				    	$('#data').html(data);
 						infinitePoll();
 					}
 				});
 			}
+			
+			function infinitePollP() {
+				$.getJSON(DOMAIN + "/devices/accelerometer?format=jsonp&callback=?",
+					function(data){
+						$('#data').html(data.data);
+						infinitePoll();
+					}
+				);
+			}
+			
 		</script>
 	</head>
 	
