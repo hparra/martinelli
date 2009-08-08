@@ -128,7 +128,10 @@ module Martinelli
               callback = @params['callback']
               content_type = "application/json"
               response_code = 200
-              response_content = "#{callback}({data: #{device.buffer}})"
+              buffer = device.buffer.trim.strip
+              $log.debug(buffer)
+              response_content = "#{callback}({data: \'#{buffer}\'})"
+              
             else
               content_type = "text/plain"
               response_code = 200
