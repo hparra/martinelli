@@ -21,7 +21,7 @@ module Martinelli
       @stop_bits = stop_bits
       @parity = parity
       @style = style
-      
+      @ciderBuffer = CiderBuffer.new
       @buffer = "EMPTY"
       @listener = nil
       @serial_port = nil
@@ -74,6 +74,8 @@ module Martinelli
       if (@listener.nil?)
         @listener = Thread.new do
           loop do
+            #####################
+            @ciderBuffer.insert(@serial_port.gets)
             @buffer = @serial_port.gets
           end
         end

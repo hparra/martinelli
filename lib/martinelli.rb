@@ -24,7 +24,6 @@ module Martinelli
     def initialize(host = "0.0.0.0", port = 5000)
       
       @server = Mongrel::HttpServer.new(host, port)
-      
       # FIXME: For interface testing
       @server.register("/apps", Mongrel::DirHandler.new("public", false))
       
@@ -128,9 +127,10 @@ module Martinelli
               callback = @params['callback']
               content_type = "application/json"
               response_code = 200
-              buffer = device.buffer.trim.strip
-              $log.debug(buffer)
-              response_content = "#{callback}({data: \'#{buffer}\'})"
+              #buffer = device.buffer.trim.strip
+              buffer = device.ciderBuffer
+             # $log.debug(buffer)
+              response_content = "#{callback}({data: \'#{buffer[0]}\'})"
               
             else
               content_type = "text/plain"
