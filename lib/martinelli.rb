@@ -9,6 +9,7 @@ require 'json'
 require 'martinelli/SerialDevice'
 require 'martinelli/ResourceHandler'
 
+
 module Martinelli
 
   # Logger
@@ -125,13 +126,21 @@ module Martinelli
           when 'GET'          
             if (@data_type == JSONP) then
               callback = @params['callback']
+              lastReqTime = @params['prevTime']
+              if lastReqTime == 'NEW'
+                lastReqTime = Time.now.to_f.to_s.sub('.','').to_i
+              end
               content_type = "application/json"
               response_code = 200
-              #buffer = device.buffer.trim.strip
-              buffer = device.ciderBuffer
-             # $log.debug(buffer)
-              response_content = "#{callback}({data: \'#{buffer[0]}\'})"
-              
+              #buffer = device.buffer.trim.stripd
+              ####Start using buffer here
+              buffer = device.ciderBuffer.get(lastReqTime)
+              $log.debug(buffer)
+             # response_content = "#{callback}({data: {}\'#{buffer[0].to_json}\, time: '#{buffer[1].to_json}\})"
+               temp = "{"
+               buffer.each {|i| temp += @buffer[i].time.to_json + ":" + @buffer[i].value.to_json + " , "}
+               temp += "}"
+               response_content =  "#{callback}({data: {" +temp +"}"
             else
               content_type = "text/plain"
               response_code = 200

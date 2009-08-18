@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'serialport' # git://github.com/toholio/ruby-serialport.git
+require 'martinelli/cider_buffer'
 
 module Martinelli
 
@@ -9,6 +10,7 @@ module Martinelli
   
     attr_reader :buffer
     attr_reader :style
+    attr_reader :ciderBuffer
     #attr_reader :delimeter
   
     # constructor
@@ -21,7 +23,7 @@ module Martinelli
       @stop_bits = stop_bits
       @parity = parity
       @style = style
-      @ciderBuffer = CiderBuffer.new
+      @ciderBuffer = CiderBuffer.new(100) # cider buffer of size 100
       @buffer = "EMPTY"
       @listener = nil
       @serial_port = nil
@@ -74,9 +76,8 @@ module Martinelli
       if (@listener.nil?)
         @listener = Thread.new do
           loop do
-            #####################
-            @ciderBuffer.insert(@serial_port.gets)
-            @buffer = @serial_port.gets
+           @ciderBuffer.insert(@serial_port.gets)
+         #   @buffer = @serial_port.gets
           end
         end
         @listener.run
