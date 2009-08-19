@@ -17,10 +17,10 @@ time = Time.new.to_f
 while i < 1000
   buffer.insert(i)
   i += 1
-  if(rand > 0.5)
+  if(rand > 0.9)
     temp = buffer.get(time)
-    ## buffer.get returns [data, lastTime]
-    puts temp[0]
-    time = temp[1]
+    puts temp
+    puts "end of chunk \n"
+    time = Time.new.to_f
   end
 end
