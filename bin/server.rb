@@ -7,6 +7,7 @@
 #server.run.join
 ################
 
+$LOAD_PATH.unshift "#{File.dirname(__FILE__)}/../lib"
 require 'martinelli/cider_buffer'
 
 
@@ -24,3 +25,4 @@ while i < 1000
     time = Time.new.to_f
   end
 end
+puts "end is = " + i
