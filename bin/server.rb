@@ -42,12 +42,14 @@ while i < 1000
 end
 temp = buffer.get(time)
 if (temp != nil)
-  puts "not nil"
   temp.pop
+  if temp != []
+    puts "last data chunk \n"
+    puts "not nil"
+    puts temp
+  end
 end
 puts "myTime: " + time.to_s + "\n"
 puts "startTime: " + buffer.getTimeStart.to_s + "\n"
 puts "endTime: " + buffer.getTimeEnd.to_s + "\n"
-puts "last data chunk \n"
-puts temp
-puts "end is = " + i.to_s
+puts "end is = " + i.to_s 
