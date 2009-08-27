@@ -29,7 +29,7 @@ while i < 1000
       puts "end of chunk \n"
     end
   end
-  if(rand(10) > 8)
+  if(rand(10) > 8) || i == 1000
     temp = buffer.get(time)
     if temp == nil
       puts "time is syncronizing"
@@ -40,7 +40,13 @@ while i < 1000
     end
   end
 end
+
+puts "\ndebug info: \n"
+puts time
+puts buffer.getTimeEnd
+puts "end of debug information\n\n"
 temp = buffer.get(time)
+puts temp
 if (temp != nil)
   temp.pop
   if temp != []
