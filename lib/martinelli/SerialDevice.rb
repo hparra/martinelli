@@ -21,7 +21,7 @@ module Martinelli
       @stop_bits = stop_bits
       @parity = parity
       @style = style
-      
+      @connected_devices = []
       @buffer = "EMPTY"
       @listener = nil
       @serial_port = nil

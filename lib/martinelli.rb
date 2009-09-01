@@ -134,17 +134,33 @@ module Martinelli
               response_code = 200
               response_content = device.buffer
             end
-            
+
+          # TODO: POST over JSONP. Research first.
           when 'POST'
             if (@body != nil && @body != "") then
-              
-              if (@body == "S")
-                device.write('S')
-                response_content = "LISTEN: 200 OK"
-              else
-                device.write(hexify(@body))
-                response_content = "200 OK"
+
+              # TODO
+              # parse body (JSON)
+              # check body.input_type
+              # if HEX, validate, and hexify
+              # if alphanumeric ASCII, validate
+
+              @parsed_json = JSON.parse(@body)
+              if(@parsed_json.input_type.to_s.upcase == "HEX")
+                  response_content = "200 OK"
+                  hexify(@parsed_json.data)
+              elsif(@parsed_json.input_type.to_s.upcase == "ASCII")
+                  response_content = "LISTEN: 200 OK"
+                  asciify(@parsed_json.data)
               end
+
+ #             if (@body == "S")
+ #               device.write('S')
+#                response_content = "LISTEN: 200 OK"
+ #             else
+  #              device.write(hexify(@body))
+  #              response_content = "200 OK"
+ #             end
               
             end
             response_code = 200
