@@ -84,15 +84,33 @@ module Martinelli
     
     def hexify(s)
       h = ""
-      s = s.gsub(/\s/, '') # remove spaces
-      $log.debug("Stripped: " + s)
-      s.scan(/../).each { | tuple | h += tuple.hex.chr }
+      s = s.split('')
+      s.each {
+        |x|
+        if(x == "0")
+          h += x
+        elsif (x.hex > 0)
+          h+= x
+        end
+      }
+  #    s = s.gsub(/\s/, '') # remove spaces
+  #    $log.debug("Stripped: " + s)
+  #    s.scan(/../).each { | tuple | h += tuple.hex.chr }
       return h
     end
     
     def asciify(str)
       s = ""
-      str.scan(/./).each { |ch| s += ch }
+      str = str.split('')
+      str.each {
+        |x|
+        a = x
+        if(?a > 31 && ?a < 127)
+          s += a
+        end
+      }
+      #str.scan(/./).each { |ch| s += ch }
+      # error when given string "_@"
       return s
     end
     
@@ -148,10 +166,10 @@ module Martinelli
               @parsed_json = JSON.parse(@body)
               if(@parsed_json.input_type.to_s.upcase == "HEX")
                   response_content = "200 OK"
-                  hexify(@parsed_json.data)
+                  device.write(hexify(@parsed_json.data))
               elsif(@parsed_json.input_type.to_s.upcase == "ASCII")
                   response_content = "LISTEN: 200 OK"
-                  asciify(@parsed_json.data)
+                  device.write(asciify(@parsed_json.data))
               end
 
  #             if (@body == "S")
