@@ -82,8 +82,9 @@ module Martinelli
       end
     end
     
-    def hexify(s)
+ def hexify(s)
       h = ""
+      s = s.chop()
       s = s.split('')
       s.each {
         |x|
@@ -91,8 +92,12 @@ module Martinelli
           h += x
         elsif (x.hex > 0)
           h+= x
+        elsif (x.hex == 0)
+          return ""
         end
       }
+      return h
+  end
   #    s = s.gsub(/\s/, '') # remove spaces
   #    $log.debug("Stripped: " + s)
   #    s.scan(/../).each { | tuple | h += tuple.hex.chr }
@@ -101,12 +106,14 @@ module Martinelli
     
     def asciify(str)
       s = ""
-      str = str.split('')
+      str = str.chop().split('')
       str.each {
         |x|
         a = x
         if(?a > 31 && ?a < 127)
           s += a
+        else
+          return ""
         end
       }
       #str.scan(/./).each { |ch| s += ch }
@@ -166,19 +173,23 @@ module Martinelli
               @parsed_json = JSON.parse(@body)
               if(@parsed_json.data_type.to_s.upcase == "HEX")
                   response_content = "200 OK"
-                  device.write(hexify(@parsed_json.data))
+                  if(hexify(@parsed_json.data) != "")
+                    device.write(hexify(@parsed_json.data))
+                  end
               elsif(@parsed_json.data_type.to_s.upcase == "ASCII")
                   response_content = "LISTEN: 200 OK"
-                  device.write(asciify(@parsed_json.data))
+                  if(asciify(@parsed_json.data) != "")
+                     device.write(asciify(@parsed_json.data))
+                  end
               end
 
- #             if (@body == "S")
- #               device.write('S')
+#              if (@body == "S")
+#                device.write('S')
 #                response_content = "LISTEN: 200 OK"
- #             else
-  #              device.write(hexify(@body))
-  #              response_content = "200 OK"
- #             end
+#              else
+#                device.write(hexify(@body))
+#                response_content = "200 OK"
+#              end
               
             end
             response_code = 200
@@ -208,4 +219,3 @@ module Martinelli
       end
     end
   end
-end
