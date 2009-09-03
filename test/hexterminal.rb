@@ -69,6 +69,8 @@ begin
         s = hexify(s)
         if(s != "")
          sp.write(s.sub("\n", "\r").to_i(16)) # send line
+        else
+          puts "Error Non valid text"
         end
       else
          sp.write(s.sub("\n", "\r"))
