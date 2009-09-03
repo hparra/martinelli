@@ -14,13 +14,13 @@ require 'serialport'
       s = s.split('')
       s.each {
         |x|
+        if (x.hex == 0)
+         return ""
+        end
         if(x == "0")
           h += x
-        end
-        if (x.hex > 0)
+        elsif (x.hex > 0)
           h+= x
-        else
-          return ""
         end
       }
       return h
