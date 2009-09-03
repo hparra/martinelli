@@ -11,18 +11,19 @@ require 'serialport'
 
  def hexify(s)
       h = ""
+      length = s.size
       s = s.split('')
       s.each {
         |x|
-        if (x.hex == 0)
-         return ""
-        end
         if(x == "0")
           h += x
         elsif (x.hex > 0)
           h+= x
         end
       }
+      if length != h.length
+        return ""
+      end
       return h
   end
 
