@@ -7,6 +7,22 @@
 require 'rubygems'
 require 'serialport'
 
+
+
+ def hexify(s)
+      h = ""
+      s = s.split('')
+      s.each {
+        |x|
+        if(x == "0")
+          h += x
+        elsif (x.hex > 0)
+          h+= x
+        end
+      }
+      return h
+  end
+
 #TODO: Add data_type param e.g. 'HEX', 'ASCII', et al.
 data_type = ARGV[0] # required
 
@@ -41,7 +57,7 @@ begin
 		  	#tty.printf("%X", sp.getc)						# output data
         # TODO: Print hex if HEX, etc
         if(data_type.to_s.upcase == "HEX")
-           tty.printf("%s", sp.gets.to_i(16))
+           tty.printf("%s", sp.gets)
         else
            tty.printf("%s", sp.gets)
         end
@@ -50,7 +66,10 @@ begin
 		while (s = tty.gets) do 								# while there is input
       # TODO: Write hex if HEX, etc.
       if(data_type.to_s.upcase == "HEX")
-        sp.write(s.sub("\n", "\r").to_i(16))						# send line
+        s = hexify(s)
+        if(s != "")
+         sp.write(s.sub("\n", "\r").to_i(16)) # send line
+        end
       else
          sp.write(s.sub("\n", "\r"))
       end
