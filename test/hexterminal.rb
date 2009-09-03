@@ -57,7 +57,7 @@ begin
 		  	#tty.printf("%X", sp.getc)						# output data
         # TODO: Print hex if HEX, etc
         if(data_type.to_s.upcase == "HEX")
-           tty.printf("%s", sp.gets)
+         # tty.printf("%s", sp.gets)
         else
            tty.printf("%s", sp.gets)
         end
