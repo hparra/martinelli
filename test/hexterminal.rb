@@ -11,7 +11,7 @@ require 'serialport'
 
  def hexify(s)
       h = ""
-      length = s.size
+      s = s.chop()
       s = s.split('')
       s.each {
         |x|
