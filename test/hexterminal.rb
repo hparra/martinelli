@@ -19,11 +19,10 @@ require 'serialport'
           h += x
         elsif (x.hex > 0)
           h+= x
+        elsif (x.hex == 0)
+          return ""
         end
       }
-      if length != h.length
-        return ""
-      end
       return h
   end
 
