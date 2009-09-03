@@ -16,7 +16,8 @@ require 'serialport'
         |x|
         if(x == "0")
           h += x
-        elsif (x.hex > 0)
+        end
+        if (x.hex > 0)
           h+= x
         else
           return ""
