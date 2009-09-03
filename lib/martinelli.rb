@@ -159,15 +159,15 @@ module Martinelli
 
               # TODO
               # parse body (JSON)
-              # check body.input_type
+              # check body.data_type
               # if HEX, validate, and hexify
               # if alphanumeric ASCII, validate
 
               @parsed_json = JSON.parse(@body)
-              if(@parsed_json.input_type.to_s.upcase == "HEX")
+              if(@parsed_json.data_type.to_s.upcase == "HEX")
                   response_content = "200 OK"
                   device.write(hexify(@parsed_json.data))
-              elsif(@parsed_json.input_type.to_s.upcase == "ASCII")
+              elsif(@parsed_json.data_type.to_s.upcase == "ASCII")
                   response_content = "LISTEN: 200 OK"
                   device.write(asciify(@parsed_json.data))
               end

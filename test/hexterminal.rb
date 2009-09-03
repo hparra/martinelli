@@ -7,11 +7,19 @@
 require 'rubygems'
 require 'serialport'
 
-# device
-port_str = ARGV[0]
+#TODO: Add data_type param e.g. 'HEX', 'ASCII', et al.
+data_type = ARGV[0] # required
+
+# device (required)
+port_str = ARGV[1]
 
 # device options
-baud_rate = ARGV[1].to_i
+baud_rate = 9600
+if(defined? ARGV[2]) then
+  baud_rate = ARGV[2].to_i # usually 9600
+end
+
+
 data_bits = 8
 stop_bits = 1
 parity = SerialPort::NONE
@@ -28,18 +36,28 @@ begin
 	Kernel.open("/dev/tty", "r+") do |tty|		# open terminal/console read + write
 		tty.sync = true													# flush output immediately
 		Thread.new do
-			loop do
+      loop do
 			  #sleep (0.1)
 		  	#tty.printf("%X", sp.getc)						# output data
-		  	tty.printf("%s", sp.gets)
+        # TODO: Print hex if HEX, etc
+        if(data_type.to_s.upcase == "HEX")
+           tty.printf("%s", sp.gets.to_i(16))
+        else
+           tty.printf("%s", sp.gets)
+        end
 			end
 		end
 		while (s = tty.gets) do 								# while there is input
-			sp.write(s.sub("\n", "\r"))						# send line
+      # TODO: Write hex if HEX, etc.
+      if(data_type.to_s.upcase == "HEX")
+        sp.write(s.sub("\n", "\r").to_i(16))						# send line
+      else
+         sp.write(s.sub("\n", "\r"))
+      end
 			#s.scan(/../).each { | tuple | sp.putc tuple.hex.chr }
 		end
 	end
 rescue Interrupt														# catch ctrl-c
-	sp.flush																	# flush one last time
+	sp.flush																	# flush one last tlsime
 	sp.close																	# close serial connection
 end

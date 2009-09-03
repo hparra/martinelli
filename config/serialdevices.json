@@ -38,5 +38,13 @@
 		"baud": 2400,
 		"stopBits": 1,
 		"parityBits": 0
-	}
+	},
+        "HRT_VSA-YCA": {
+               "name": "HRT_VSA-YCA",
+               "format": "ASCII",
+               "port": "\/dev\/ttyS0",
+               "delimiter": "\r\n",
+               "baud": 4800,
+               "stopBits": 1
+        }
 }
