@@ -18,6 +18,8 @@ require 'serialport'
           h += x
         elsif (x.hex > 0)
           h+= x
+        else
+          return ""
         end
       }
       return h
