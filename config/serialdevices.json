@@ -50,6 +50,14 @@
                "delimiter": "\r\n",
                "baud": 4800,
                "stopBits": 1
+        },
+        "heart_rate_monitor": {
+            "name": "heart_rate_monitor",
+            "format": "ASCII",
+            "port": "\/dev\/ttyUSB0",
+            "delimiter": "\r\n",
+            "baud": 9600,
+            "stopBits": 1
         }
 }
 
