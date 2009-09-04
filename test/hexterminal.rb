@@ -79,6 +79,9 @@ begin
         if(data_type.to_s.upcase == "HEX")
           tty.printf("%s", sp.gets.to_i(16))
         else
+           if(sp.getc == "\r")
+             puts "returned CR"
+           end
            tty.printf("%c", sp.getc)
         end
 			end
