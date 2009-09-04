@@ -79,7 +79,7 @@ begin
         if(data_type.to_s.upcase == "HEX")
           tty.printf("%s", sp.gets.to_i(16))
         else
-           tty.printf("%s", sp.gets('\r'))
+           tty.printf("%s", sp.getc)
         end
 			end
 		end
