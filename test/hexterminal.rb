@@ -26,6 +26,23 @@ require 'serialport'
       return h
   end
 
+     def asciify(str)
+      s = ""
+      str = str.chop().split('')
+      str.each {
+        |x|
+        a = x
+        if(?a > 31 && ?a < 127)
+          s += a
+        else
+          return ""
+        end
+      }
+      #str.scan(/./).each { |ch| s += ch }
+      # error when given string "_@"
+      return s
+    end
+
 #TODO: Add data_type param e.g. 'HEX', 'ASCII', et al.
 data_type = ARGV[0] # required
 
@@ -62,7 +79,7 @@ begin
         if(data_type.to_s.upcase == "HEX")
           tty.printf("%s", sp.gets.to_i(16))
         else
-           tty.printf("%s", sp.gets)
+           tty.printf("%s", sp.gets('\r'))
         end
 			end
 		end
@@ -75,7 +92,7 @@ begin
         else
           puts "Error Non valid text"
         end
-      else
+      else # If ASCII
          sp.write(s.sub("\n", "\r"))
       end
 			#s.scan(/../).each { | tuple | sp.putc tuple.hex.chr }
