@@ -79,10 +79,8 @@ begin
         if(data_type.to_s.upcase == "HEX")
           tty.printf("%s", sp.gets.to_i(16))
         else
-           if(sp.getc == '\r')
-              tty.printf("%s", "printed <CR>")
-           end
-           tty.printf("%c", sp.getc)
+          #TODO FIX THIS PROBLEM WITH GETC
+          tty.printf("%c", sp.getc)
         end
 			end
 		end
@@ -93,7 +91,7 @@ begin
         if(s != "")
          sp.write(s.sub("\n", "\r").to_i(16)) # send line
         else
-          puts "Error Non valid text"
+          puts "Error, invalid character"
         end
       else # If ASCII
          sp.write(s.sub("\n", "\r"))
