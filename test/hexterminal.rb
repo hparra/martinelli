@@ -93,7 +93,7 @@ begin
         else
           puts "Error, invalid character"
         end
-      else # If ASCII
+      else # If ASCII then do this.
          sp.write(s.sub("\n", "\r"))
       end
 			#s.scan(/../).each { | tuple | sp.putc tuple.hex.chr }
