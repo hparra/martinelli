@@ -101,7 +101,7 @@ module Martinelli
   #    s = s.gsub(/\s/, '') # remove spaces
   #    $log.debug("Stripped: " + s)
   #    s.scan(/../).each { | tuple | h += tuple.hex.chr }
-      return h
+  #    return h
     end
     
     def asciify(str)
