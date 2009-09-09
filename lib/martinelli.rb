@@ -153,7 +153,7 @@ module Martinelli
               callback = @params['callback']
               content_type = "application/json"
               response_code = 200
-              response_content = "#{callback}({data: #{device.buffer}})"
+              response_content = "#{callback}({data: \"#{device.buffer}\"})"
             else
               content_type = "text/plain"
               response_code = 200
