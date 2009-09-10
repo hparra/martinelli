@@ -148,7 +148,7 @@ module Martinelli
         else
           device = @serial_devices[@parsed_request_path.last] # again?
 
-
+          @request_method = @params['method']
           case (@request_method)
           when 'GET'          
             if (@data_type == JSONP) then
@@ -158,10 +158,10 @@ module Martinelli
 
               if(@params['device_type'] == "heart")
                 puts "heart type data " + device.buffer.to_a(' ')[2] + "\n"
-                #response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2]}\"})"
+                response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2]}\"})"
               else
                 puts device.buffer.to_s.strip
-               #response_content = "#{callback}({data: \"#{device.buffer.to_s.strip}\"})"
+                response_content = "#{callback}({data: \"#{device.buffer.to_s.strip}\"})"
               end
             else
               content_type = "text/plain"
@@ -169,7 +169,7 @@ module Martinelli
               response_content = device.buffer
             end
 
-          # TODO: POST over JSONP. Research first.
+          # TODO: POST over JSONP. Research first. CROSS DOMAIN REQUEST !!!! TRY TO HACK SOMETHING TOGETHER !!!!
           when 'POST'
             if (@body != nil && @body != "") then
 
