@@ -155,9 +155,10 @@ module Martinelli
               content_type = "application/json"
               response_code = 200
               if(device_type == "heart")
-                puts "heart type data " + device.buffer.to_a(' ')[2].strip
+                puts "heart type data " + device.buffer.to_a(' ')[2].strip + "\n"
                 response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2].strip}\"})"
               else
+               puts "other type of data\n"
                response_content = "#{callback}({data: \"#{device.buffer.to_s.strip}\"})"
               end
             else
@@ -184,12 +185,12 @@ module Martinelli
                   end
               elsif(@parsed_json.data_type.to_s.upcase == "ASCII")
                   response_content = "LISTEN: 200 OK"
-                  if(asciify(@parsed_json.data) != "")
+                  if(asciify(@parsed_json.data.strip) != "")
                      #device.write(asciify(@parsed_json.data.to_s))
                      if(@parsed_json.device_type.to_s.upcase.strip == "HEART")
                        device_type = "heart"
                      end
-                     device.write(@parsed_json.data.to_s)
+                     device.write(@parsed_json.data.to_s.strip)
                   end
               end
 
