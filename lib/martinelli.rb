@@ -179,7 +179,8 @@ module Martinelli
               elsif(@parsed_json.data_type.to_s.upcase == "ASCII")
                   response_content = "LISTEN: 200 OK"
                   if(asciify(@parsed_json.data) != "")
-                     device.write(asciify(@parsed_json.data.to_s))
+                     #device.write(asciify(@parsed_json.data.to_s))
+                     device.write(@parsed_json.data.to_s)
                   end
               end
 
