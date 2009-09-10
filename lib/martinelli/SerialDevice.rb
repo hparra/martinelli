@@ -82,6 +82,7 @@ module Martinelli
               @cat = ""
             else 
               @cat += @temp
+              puts @cat
             end
           end
         end
