@@ -157,8 +157,8 @@ module Martinelli
               response_code = 200
 
               if(@params['device_type'] == "heart")
-                puts "heart type data " + device.buffer.to_a(' ')[2].strip + "\n"
-                response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2].strip}\"})"
+                puts "heart type data " + device.buffer.to_a(' ')[2] + "\n"
+                response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2]}\"})"
               else
                 puts "other type"
                response_content = "#{callback}({data: \"#{device.buffer.to_s.strip}\"})"
