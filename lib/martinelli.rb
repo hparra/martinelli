@@ -147,14 +147,19 @@ module Martinelli
           response_content = "404 NOT FOUND"
         else
           device = @serial_devices[@parsed_request_path.last] # again?
-          
+
+          if (@request_method == GET) then
+            @request_method = @params['method'] || GET
+          end
+
           case (@request_method)
           when 'GET'          
             if (@data_type == JSONP) then
               callback = @params['callback']
               content_type = "application/json"
               response_code = 200
-              if(device_type == "heart")
+
+              if(@params['device_type'] == "heart")
                 puts "heart type data " + device.buffer.to_a(' ')[2].strip + "\n"
                 response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2].strip}\"})"
               else
@@ -183,10 +188,10 @@ module Martinelli
                     device.write(hexify(@parsed_json.data))
                   end
               elsif(@parsed_json.data_type.to_s.upcase == "ASCII")
+                puts @parsed_json.device_type.to_s
                   response_content = "LISTEN: 200 OK"
                   if(asciify(@parsed_json.data.strip) != "")
                      #device.write(asciify(@parsed_json.data.to_s))
-                     puts @parsed_json.device_type.to_s
                      if(@parsed_json.device_type.to_s.upcase.strip == "HEART")
                        device_type = "heart"
                      end
