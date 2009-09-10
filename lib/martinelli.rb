@@ -132,6 +132,7 @@ module Martinelli
       content_type = "text/plain"
       response_code = 500
       response_content = "500"
+      device_type = "Unknown"
       
       # FIXME: Design won't work if we want to stream data
       begin
@@ -153,7 +154,12 @@ module Martinelli
               callback = @params['callback']
               content_type = "application/json"
               response_code = 200
-              response_content = "#{callback}({data: \"#{device.buffer.to_s.strip}\"})"
+              if(device_type == "heart")
+                puts "heart type data " + device.buffer.to_a(' ')[2].strip
+                response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2].strip}\"})"
+              else
+               response_content = "#{callback}({data: \"#{device.buffer.to_s.strip}\"})"
+              end
             else
               content_type = "text/plain"
               response_code = 200
@@ -180,6 +186,9 @@ module Martinelli
                   response_content = "LISTEN: 200 OK"
                   if(asciify(@parsed_json.data) != "")
                      #device.write(asciify(@parsed_json.data.to_s))
+                     if(@parsed_json.device_type == "heart")
+                       device_type = "heart"
+                     end
                      device.write(@parsed_json.data.to_s)
                   end
               end
