@@ -148,9 +148,6 @@ module Martinelli
         else
           device = @serial_devices[@parsed_request_path.last] # again?
 
-          if (@request_method == GET) then
-            @request_method = @params['method'] || GET
-          end
 
           case (@request_method)
           when 'GET'          
@@ -193,9 +190,6 @@ module Martinelli
                   response_content = "LISTEN: 200 OK"
                   if(asciify(@parsed_json.data.strip) != "")
                      #device.write(asciify(@parsed_json.data.to_s))
-                     if(@parsed_json.device_type.to_s.upcase.strip == "HEART")
-                       device_type = "heart"
-                     end
                      device.write(@parsed_json.data.to_s.strip)
                   end
               end
