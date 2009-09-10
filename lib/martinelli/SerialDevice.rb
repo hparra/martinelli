@@ -82,7 +82,7 @@ module Martinelli
               @cat = ""
             else 
               @cat += @temp
-              @buffer = "Helloworld"
+              @buffer = @temp
             end
           end
         end

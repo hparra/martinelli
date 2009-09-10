@@ -160,7 +160,7 @@ module Martinelli
                 device.write("G1")
                 puts "called G1 \n"
                 puts @params['data']
-                device.write(@params['data'])
+                device.write(@params['data'].to_s)
                 puts device.buffer
                 response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2]}\"})"
               else
