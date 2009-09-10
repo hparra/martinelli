@@ -68,9 +68,9 @@ module Martinelli
           serial_device_name = i[0]
           serial_device = SerialDevice.new(i[1]["port"], i[1]["baud"], i[1]["dataBits"], i[1]["stopBits"], i[1]["parityBits"], i[1]["style"])
           serial_device.open # TODO Error Checking!
-          serial_device.listen
+          serial_device.listen # I DON'T THINK THIS IS WORKING!!!! HACK HACK HACK!!!!!!!
           if (serial_device.style == "LISTEN")
-            serial_device.listen # thread
+            #serial_device.listen # thread
           end
           
           @serial_devices[serial_device_name] = serial_device
