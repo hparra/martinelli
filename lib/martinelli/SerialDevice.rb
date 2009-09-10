@@ -25,6 +25,7 @@ module Martinelli
       @buffer = "EMPTY"
       @listener = nil
       @serial_port = nil
+      @cat = ""
       #$log.debug("initialized")
     end
   
@@ -73,8 +74,15 @@ module Martinelli
     def listen
       if (@listener.nil?)
         @listener = Thread.new do
+
           loop do
-            @buffer = @serial_port.gets
+            @temp = @serial_port.getc
+            if(@temp != '\r')
+              @cat += @temp
+            else 
+              @buffer = @cat
+              @cat = ""
+            end
           end
         end
         @listener.run
