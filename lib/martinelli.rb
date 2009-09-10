@@ -189,11 +189,13 @@ module Martinelli
                   end
               elsif(@parsed_json.data_type.to_s.upcase == "ASCII")
                 puts @parsed_json.device_type.to_s
+                puts "json data is : "
+                puts @parsed_json.data
                   response_content = "LISTEN: 200 OK"
-                  if(asciify(@parsed_json.data.strip) != "")
+                  if(asciify(@parsed_json.data) != "")
                     puts "feed data"
                      #device.write(asciify(@parsed_json.data.to_s))
-                     device.write(@parsed_json.data.to_s.strip.sub("\n", "\r"))
+                     device.write(@parsed_json.data)
                   end
               end
 
