@@ -68,10 +68,9 @@ module Martinelli
           serial_device_name = i[0]
           serial_device = SerialDevice.new(i[1]["port"], i[1]["baud"], i[1]["dataBits"], i[1]["stopBits"], i[1]["parityBits"], i[1]["style"])
           serial_device.open # TODO Error Checking!
-          serial_device.listen
           
           if (serial_device.style == "LISTEN")
-           # serial_device.listen # thread
+            serial_device.listen # thread
           end
           
           @serial_devices[serial_device_name] = serial_device
@@ -159,10 +158,10 @@ module Martinelli
 
               if(@params['device_type'] == "heart")
                 device.write("G1")
-                puts "called G1 \n"
-                puts @params['data']
+              #  puts "called G1 \n"
+              #  puts @params['data']
                 device.write(@params['data'].to_s + 13.chr)
-                puts device.buffer
+              #  puts device.buffer
                 response_content = "#{callback}({data: \"#{device.buffer.to_s}\"})"
               else
                 puts device.buffer.to_s.strip

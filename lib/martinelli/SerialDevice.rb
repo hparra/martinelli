@@ -74,6 +74,7 @@ module Martinelli
     def listen
       if (@listener.nil?)
         @listener = Thread.new do
+          puts "I AM LISTENING IN SERIAL DEVICE"
           # IS THIS RUNNING? I'm starting to think this part of the code is not running....
           loop do
             @temp = @serial_port.getc
