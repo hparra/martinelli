@@ -163,6 +163,7 @@ module Martinelli
                 puts "heart type data " + device.buffer.to_a(' ')[2].strip + "\n"
                 response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2].strip}\"})"
               else
+                puts "other type"
                response_content = "#{callback}({data: \"#{device.buffer.to_s.strip}\"})"
               end
             else
