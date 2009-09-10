@@ -77,11 +77,11 @@ module Martinelli
 
           loop do
             @temp = @serial_port.getc
-            if(@temp != '\r')
-              @cat += @temp
-            else 
+            if(@temp == 13.chr || @temp == '\n')
               @buffer = @cat
               @cat = ""
+            else 
+              @cat += @temp
             end
           end
         end
