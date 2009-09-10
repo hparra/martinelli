@@ -158,6 +158,7 @@ module Martinelli
 
               if(@params['device_type'] == "heart")
                 device.write("G1")
+                puts "called G1 \n"
                 puts device.buffer.to_a(' ')[2]
                 response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2]}\"})"
               else
