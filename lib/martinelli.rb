@@ -144,7 +144,7 @@ module Martinelli
         
         if (device.nil?) then
           response_code = 404
-          response_content = "404 NOT FOUND"
+          response_content = "404: DEVICE NOT FOUND"
         else
           device = @serial_devices[@parsed_request_path.last] # again?
 
@@ -160,12 +160,12 @@ module Martinelli
                 device.write("G1")
                 puts "called G1 \n"
                 puts @params['data']
-                device.write(@params['data'].to_s)
+                device.write(@params['data'].to_s + 13.chr)
                 puts device.buffer
-                response_content = "#{callback}({data: \"#{device.buffer.to_a(' ')[2]}\"})"
+                response_content = "#{callback}({data: \"#{device.buffer.to_s}\"})"
               else
                 puts device.buffer.to_s.strip
-                response_content = "#{callback}({data: \"#{device.buffer.to_s.strip}\"})"
+                response_content = "#{callback}({data: \"#{device.buffer.to_s}\"})"
               end
             else
               content_type = "text/plain"

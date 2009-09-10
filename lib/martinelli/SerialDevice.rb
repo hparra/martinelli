@@ -74,7 +74,7 @@ module Martinelli
     def listen
       if (@listener.nil?)
         @listener = Thread.new do
-
+          # IS THIS RUNNING?
           loop do
             @temp = @serial_port.getc
             if(@temp == 13.chr || @temp == '\n')
@@ -82,12 +82,15 @@ module Martinelli
               @cat = ""
             else 
               @cat += @temp
-              @buffer = @temp
+              @buffer = @temp #debugging only remove later
             end
           end
+          
+
         end
         @listener.run
       end
+      
     end
     
     def listening?
