@@ -191,6 +191,7 @@ module Martinelli
                 puts @parsed_json.device_type.to_s
                   response_content = "LISTEN: 200 OK"
                   if(asciify(@parsed_json.data.strip) != "")
+                    puts "feed data"
                      #device.write(asciify(@parsed_json.data.to_s))
                      device.write(@parsed_json.data.to_s.strip.sub("\n", "\r"))
                   end
