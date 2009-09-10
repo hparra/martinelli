@@ -186,7 +186,7 @@ module Martinelli
                   response_content = "LISTEN: 200 OK"
                   if(asciify(@parsed_json.data) != "")
                      #device.write(asciify(@parsed_json.data.to_s))
-                     if(@parsed_json.device_type == "heart")
+                     if(@parsed_json.device_type.to_s.upcase.strip == "HEART")
                        device_type = "heart"
                      end
                      device.write(@parsed_json.data.to_s)
