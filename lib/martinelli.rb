@@ -192,7 +192,7 @@ module Martinelli
                   response_content = "LISTEN: 200 OK"
                   if(asciify(@parsed_json.data.strip) != "")
                      #device.write(asciify(@parsed_json.data.to_s))
-                     device.write(@parsed_json.data.to_s.strip)
+                     device.write(@parsed_json.data.to_s.strip.sub("\n", "\r"))
                   end
               end
 
