@@ -74,7 +74,7 @@ module Martinelli
       if (@listener.nil?)
         @listener = Thread.new do
           loop do
-            @buffer = @serial_port.gets.to_s.chop
+            @buffer = @serial_port.gets
           end
         end
         @listener.run
