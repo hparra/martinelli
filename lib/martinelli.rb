@@ -8,6 +8,7 @@ require 'json'
 
 require 'martinelli/SerialDevice'
 require 'martinelli/ResourceHandler'
+require 'martinelli/Helpers'
 
 module Martinelli
 
@@ -40,10 +41,13 @@ module Martinelli
 
   end
   
+  
   class SerialDeviceManager
     def initialize
     end
   end
+  
+  
   
   #
   # Serial Device Handler
@@ -69,10 +73,14 @@ module Martinelli
           serial_device = SerialDevice.new(i[1]["port"], i[1]["baud"], i[1]["dataBits"], i[1]["stopBits"], i[1]["parityBits"], i[1]["style"])
           serial_device.open # TODO Error Checking!
           
+          
+          
           serial_device.listen() # I DON'T THINK THIS IS WORKING!!!! HACK HACK HACK!!!!!!!
           if (serial_device.style == "LISTEN")
             #serial_device.listen # thread
           end
+          
+          
           
           @serial_devices[serial_device_name] = serial_device
           
@@ -81,45 +89,6 @@ module Martinelli
           $log.error(serial_device_name + ": " + i[1]["port"] + " does not exist!")
         end
       end
-    end
-    
- def hexify(s)
-      h = ""
-      s = s.chop()
-      s = s.split('')
-      s.each {
-        |x|
-        if(x == "0")
-          h += x
-        elsif (x.hex > 0)
-          h+= x
-        elsif (x.hex == 0)
-          return ""
-        end
-      }
-      return h
-  end
-  #    s = s.gsub(/\s/, '') # remove spaces
-  #    $log.debug("Stripped: " + s)
-  #    s.scan(/../).each { | tuple | h += tuple.hex.chr }
-  #    return h
-    end
-    
-    def asciify(str)
-      s = ""
-      str = str.chop().split('')
-      str.each {
-        |x|
-        a = x
-        if(?a > 31 && ?a < 127)
-          s += a
-        else
-          return ""
-        end
-      }
-      #str.scan(/./).each { |ch| s += ch }
-      # error when given string "_@"
-      return s
     end
     
     #
@@ -136,8 +105,7 @@ module Martinelli
       device_type = "Unknown" #  remove once done with debugging.
       
       # FIXME: Design won't work if we want to stream data
-      begin
-        
+      begin        
         device = nil
         if @serial_devices.has_key?(@parsed_request_path.last)
           device = @serial_devices[@parsed_request_path.last]
@@ -145,10 +113,9 @@ module Martinelli
         
         if (device.nil?) then
           response_code = 404
-          response_content = "404: DEVICE NOT FOUND (Thrown from SerialDevice.rb)"
+          response_content = "404: DEVICE NOT FOUND"
         else
-          device = @serial_devices[@parsed_request_path.last] # again?
-
+          
           @request_method = @params['method']
           case (@request_method)
           when 'GET'          
@@ -202,14 +169,6 @@ module Martinelli
                      device.write(@parsed_json.data)
                   end
               end
-
-#              if (@body == "S")
-#                device.write('S')
-#                response_content = "LISTEN: 200 OK"
-#              else
-#                device.write(hexify(@body))
-#                response_content = "200 OK"
-#              end
               
             end
             response_code = 200
@@ -233,9 +192,12 @@ module Martinelli
         $log.error(e)
       end
       
+      # RESPONSE
       response.start(response_code) do |head, out|
         head["Content-Type"] = content_type
         out << response_content
       end
+      
     end
   end
+end 

@@ -38,25 +38,13 @@ module Martinelli
           @serial_port = SerialPort.new(@port, @baud_rate, @data_bits, @stop_bits, @parity)
         rescue ArgumentError => e
           # wrong argument to SerialPort
-          # instance was never created
           raise
         rescue Errno::ENOENT => e
           # device doesn't exist
           raise
         rescue Errno::EBUSY => e
           # device is in use by another program
-          # instance was never created
           raise
-        #rescue Timeout::Error => e
-          # waited too long for magic confirmation
-          # instance was created - close it
-        #  @serial_port.close
-        #  raise
-        #rescue IOError => e
-          # device sent back garbage
-          # instance was created - close it
-        #  @serial_port.close
-        #  raise
         end
       end
     end
@@ -89,13 +77,13 @@ module Martinelli
               @buffer = @temp #debugging only remove later
             end
           end
-          
-
         end
         @listener.run
       end
       
     end
+    
+    
     
     def listening?
       return !@listener.nil?

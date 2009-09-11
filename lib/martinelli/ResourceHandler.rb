@@ -9,6 +9,8 @@ module Martinelli
   #
   class ResourceHandler < Mongrel::HttpHandler
 
+    REST_OVER_GET_ALLOWED = true
+
     # http 1.1 constants
     HEAD = "HEAD".freeze
     GET = "GET".freeze
@@ -44,6 +46,12 @@ module Martinelli
     def preprocess(request, response)
       
       @request_method = request.params[Mongrel::Const::REQUEST_METHOD] || Mongrel::Const::GET
+      
+      # REST over GET
+      if (REST_OVER_GET_ALLOWED && @request_method === GET && request.params["method"] != nil) then
+        @request_method = request.params["method"]
+      end
+      
       if (@request_method != HEAD &&
           @request_method != GET &&
           @request_method != PUT &&
