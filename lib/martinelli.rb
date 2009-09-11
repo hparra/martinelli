@@ -74,7 +74,10 @@ module Martinelli
           serial_device.open # TODO Error Checking!
           if serial_device == nil
             puts " HEEEEEEEEEEEEEY IT'S NILLLLLLLLLL NULLLLLLL NADA!!!!"
+          else
+            puts " Aight it's not nill...but it still doesn't work!"
           end
+
           
           
           
