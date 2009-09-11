@@ -24,7 +24,7 @@
 		"style": "LISTEN",
 		"format": "ASCII",
 		"delimiter": "\r\n",
-		"port": "\/dev\/tty.usbserial-A8003VSz",
+		"port": "\/dev\/ttyUSB1",
 		"baud": 2400,
 		"stopBits": 1,
 		"parityBits": 0
