@@ -68,7 +68,8 @@ module Martinelli
           serial_device_name = i[0]
           serial_device = SerialDevice.new(i[1]["port"], i[1]["baud"], i[1]["dataBits"], i[1]["stopBits"], i[1]["parityBits"], i[1]["style"])
           serial_device.open # TODO Error Checking!
-          serial_device.listen # I DON'T THINK THIS IS WORKING!!!! HACK HACK HACK!!!!!!!
+          
+          serial_device.listen() # I DON'T THINK THIS IS WORKING!!!! HACK HACK HACK!!!!!!!
           if (serial_device.style == "LISTEN")
             #serial_device.listen # thread
           end
@@ -132,7 +133,7 @@ module Martinelli
       content_type = "text/plain"
       response_code = 500
       response_content = "500"
-      device_type = "Unknown"
+      device_type = "Unknown" #  remove once done with debugging.
       
       # FIXME: Design won't work if we want to stream data
       begin
@@ -144,7 +145,7 @@ module Martinelli
         
         if (device.nil?) then
           response_code = 404
-          response_content = "404: DEVICE NOT FOUND"
+          response_content = "404: DEVICE NOT FOUND (Thrown from SerialDevice.rb)"
         else
           device = @serial_devices[@parsed_request_path.last] # again?
 
@@ -161,6 +162,7 @@ module Martinelli
               #  puts "called G1 \n"
               #  puts @params['data']
                 device.write(@params['data'].to_s + 13.chr)
+                
               #  puts device.buffer
                 response_content = "#{callback}({data: \"#{device.buffer.to_s}\"})"
               else

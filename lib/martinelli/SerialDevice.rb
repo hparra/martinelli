@@ -73,6 +73,7 @@ module Martinelli
     # Threaded to do who knows what!
     def listen
       # This doesn't execute even when you call it!
+      # Why isn't this working!!!!!!!
       puts "I AM LISTENING IN SERIAL DEVICE Haven't created new thread yet!"
       if (@listener.nil?)
         @listener = Thread.new do
