@@ -72,6 +72,9 @@ module Martinelli
           serial_device_name = i[0]
           serial_device = SerialDevice.new(i[1]["port"], i[1]["baud"], i[1]["dataBits"], i[1]["stopBits"], i[1]["parityBits"], i[1]["style"])
           serial_device.open # TODO Error Checking!
+          if serial_device == nil
+            puts " HEEEEEEEEEEEEEY IT'S NILLLLLLLLLL NULLLLLLL NADA!!!!"
+          end
           
           
           
@@ -102,7 +105,6 @@ module Martinelli
       content_type = "text/plain"
       response_code = 500
       response_content = "500"
-      device_type = "Unknown" #  remove once done with debugging.
       
       # FIXME: Design won't work if we want to stream data
       begin        

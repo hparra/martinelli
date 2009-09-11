@@ -32,8 +32,7 @@ module Martinelli
     # open connection to device
     #
     def open
-      if @serial_port.nil? then
-        begin
+      if @serial_port.nil? then        begin
           # make connection
           @serial_port = SerialPort.new(@port, @baud_rate, @data_bits, @stop_bits, @parity)
         rescue ArgumentError => e
@@ -60,6 +59,7 @@ module Martinelli
     
     # Threaded to do who knows what!
     def listen
+      # DOESN'T RUN WHEN CALLED!!!!!!! HOW DOES THIS MAKE ANY SENSE!!!!! 
       # This doesn't execute even when you call it!
       # Why isn't this working!!!!!!!
       puts "I AM LISTENING IN SERIAL DEVICE Haven't created new thread yet!"
