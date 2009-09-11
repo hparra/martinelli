@@ -64,7 +64,6 @@ module Martinelli
       # Why isn't this working!!!!!!!
       if (@listener.nil?)
         @listener = Thread.new do
-          # IS THIS RUNNING? I'm starting to think this part of the code is not running....
           loop do
             @buffer = @serial_port.gets
           end

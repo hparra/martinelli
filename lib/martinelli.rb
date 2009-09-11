@@ -119,15 +119,7 @@ module Martinelli
               callback = @params['callback']
               content_type = "application/json"
               response_code = 200
-
-              if(defined? @params['data'])
-                device.write("G1")
-                device.write(@params['data'].to_s + 13.chr)              
-              #  puts device.buffer
-                response_content = "#{callback}({data: \"#{device.buffer.to_s}\"})"
-              else
-                response_content = "#{callback}({data: \"#{device.buffer.to_s}\"})"
-              end
+              response_content = "#{callback}({data: \"#{device.buffer}\"})"
             else
               content_type = "text/plain"
               response_code = 200
@@ -156,8 +148,6 @@ module Martinelli
                 puts @parsed_json.data
                   response_content = "LISTEN: 200 OK"
                   if(asciify(@parsed_json.data) != "")
-                    puts "feed data"
-                     #device.write(asciify(@parsed_json.data.to_s))
                      device.write(@parsed_json.data)
                   end
               end
