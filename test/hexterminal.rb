@@ -57,7 +57,7 @@ end
 
 
 data_bits = 8
-stop_bits = 1
+stop_bits = 2
 parity = SerialPort::NONE
 
 # create connection
