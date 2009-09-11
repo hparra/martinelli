@@ -76,9 +76,7 @@ module Martinelli
           if (serial_device.style == "LISTEN")
             serial_device.listen # thread
           end
-          
-          
-          
+
           @serial_devices[serial_device_name] = serial_device
           
           $log.info("\"" + serial_device_name + "\" initialized!")

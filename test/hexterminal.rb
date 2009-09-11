@@ -80,7 +80,7 @@ begin
           tty.printf("%s", sp.gets.to_i(16))
         else
           #TODO FIX THIS PROBLEM WITH GETC
-          tty.printf("%c", sp.getc)
+          tty.printf("%s", sp.gets)
         end
 			end
 		end
