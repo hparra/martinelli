@@ -62,19 +62,11 @@ module Martinelli
       # DOESN'T RUN WHEN CALLED!!!!!!! HOW DOES THIS MAKE ANY SENSE!!!!! 
       # This doesn't execute even when you call it!
       # Why isn't this working!!!!!!!
-      puts "I AM LISTENING IN SERIAL DEVICE Haven't created new thread yet!"
       if (@listener.nil?)
         @listener = Thread.new do
-          puts "I AM LISTENING IN SERIAL DEVICE"
           # IS THIS RUNNING? I'm starting to think this part of the code is not running....
           loop do
-            @temp = @serial_port.getc
-            if(@temp == 13.chr || @temp == '\n')
-              @buffer = @cat
-              @cat = ""
-            else 
-              @cat += @temp
-            end
+            @buffer = @serial_port.gets
           end
         end
         @listener.run
