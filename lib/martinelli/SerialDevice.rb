@@ -74,7 +74,6 @@ module Martinelli
               @cat = ""
             else 
               @cat += @temp
-              @buffer = @temp #debugging only remove later
             end
           end
         end
