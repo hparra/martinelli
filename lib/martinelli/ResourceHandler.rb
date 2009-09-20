@@ -47,10 +47,9 @@ module Martinelli
       
       @request_method = request.params[Mongrel::Const::REQUEST_METHOD] || Mongrel::Const::GET
       
-      # REST over GET
-      if (REST_OVER_GET_ALLOWED && @request_method === GET && request.params["method"] != nil) then
-        @request_method = request.params["method"]
-      end
+      #if (REST_OVER_GET_ALLOWED && @request_method === GET && request.params["method"] != nil) then
+      #  @request_method = request.params["method"]
+      #end
       
       if (@request_method != HEAD &&
           @request_method != GET &&
@@ -93,7 +92,7 @@ module Martinelli
       # right now it's equivalent to QUERY_STRING
       # but it may be JSON or XML
       #@body = Mongrel::HttpRequest.query_parse(request.body.string)
-      @body = request.body.string
+      @body =  request.body.string
 
       return request, response # do we even need to be sending these this back? they weren't changed
     end
