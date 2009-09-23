@@ -110,7 +110,8 @@ module Martinelli
           response_content = "404: DEVICE NOT FOUND"
         else
           
-          @request_method = @params['method']
+          #@request_method = @params['method'].upcase
+		  @request_method = 'GET'
           case (@request_method)
           when 'GET'          
             if (@data_type == JSONP) then

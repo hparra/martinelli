@@ -24,7 +24,7 @@
 		"style": "LISTEN",
 		"format": "ASCII",
 		"delimiter": "\r\n",
-		"port": "\/dev\/ttyUSB1",
+		"port": "COM4",
 		"baud": 2400,
 		"stopBits": 1,
 		"parityBits": 0
