@@ -5,10 +5,10 @@ require 'mongrel'
 require 'logger'
 #require 'rbconfig' # for knowing OS
 require 'json'
-
-require 'martinelli/SerialDevice'
-require 'martinelli/ResourceHandler'
-require 'martinelli/Helpers'
+  
+require "martinelli/SerialDevice"
+require "martinelli/ResourceHandler"
+require "martinelli/Helpers"
 
 module Martinelli
 
@@ -55,8 +55,9 @@ module Martinelli
   class SerialDeviceHandler < ResourceHandler
 
     def initialize
-      
-      config_file = "config/serialdevices.json"
+      puts "__FILE__: " + File.dirname(__FILE__)
+      puts $LOAD_PATH
+      config_file = File.dirname(__FILE__) + "/../config/serialdevices.json"
       # TODO File error checking
       config_file = File.open(config_file, "r")
       # TODO JSON Parsing error checking

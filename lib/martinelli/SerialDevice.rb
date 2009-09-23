@@ -1,7 +1,7 @@
 # SerialDevice.rb
 
 require 'rubygems'
-require 'serialport' # git://github.com/toholio/ruby-serialport.git
+require 'serialport' # git://github.com/hparra/ruby-serialport.git
 
 module Martinelli
 
