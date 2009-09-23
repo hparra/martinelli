@@ -27,16 +27,16 @@
 		<title>HBOX</title>
 		<script src="jquery-1.3.2.js"></script>
 		<script type="text/javascript">
-			var DOMAIN = "http://vath.calit2.uci.edu:5000";
+			var DOMAIN = "http://localhost:5000";
 		
 			$(document).ready(function () {
-				infinitePollP();
+				infinitePoll();
 			});
 			
 			function infinitePoll() {
 				$.ajax({
 					type: "GET",
-					url: DOMAIN + "/devices/accelerometer",
+					url: DOMAIN + "/devices/accelerometer/",
 					success: function(data, status) {
 				    	$('#data').html(data);
 						infinitePoll();

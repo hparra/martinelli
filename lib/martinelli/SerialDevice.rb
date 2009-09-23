@@ -26,7 +26,7 @@ module Martinelli
       @listener = nil
       @serial_port = nil
       @cat = ""
-      #$log.debug("initialized")
+      $log.debug("initialized")
     end
   
     # open connection to device
@@ -59,13 +59,14 @@ module Martinelli
     
     # Threaded to do who knows what!
     def listen
-      # DOESN'T RUN WHEN CALLED!!!!!!! HOW DOES THIS MAKE ANY SENSE!!!!! 
-      # This doesn't execute even when you call it!
-      # Why isn't this working!!!!!!!
       if (@listener.nil?)
         @listener = Thread.new do
+		  $log.debug("Creating new thread!")
           loop do
+			#sleep(0.1) # Why windows needs this, i don't know.
+			# read timeout?
             @buffer = @serial_port.gets
+			Thread.pass
           end
         end
         @listener.run
@@ -164,7 +165,9 @@ module Martinelli
       puts(s)
     end
   
-
+	def to_s
+		"Hello!"
+	end
   
   end
 

@@ -110,8 +110,7 @@ module Martinelli
           response_content = "404: DEVICE NOT FOUND"
         else
           
-          #@request_method = @params['method'].upcase
-		  @request_method = 'GET'
+
           case (@request_method)
           when 'GET'          
             if (@data_type == JSONP) then
@@ -120,6 +119,7 @@ module Martinelli
               response_code = 200
               response_content = "#{callback}({data: \"#{device.buffer.to_s.strip}\"})"
             else
+			  $log.debug("I'm regular get")
               content_type = "text/plain"
               response_code = 200
               response_content = device.buffer

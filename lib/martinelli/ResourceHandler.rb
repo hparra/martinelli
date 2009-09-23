@@ -46,11 +46,11 @@ module Martinelli
     def preprocess(request, response)
       
       @request_method = request.params[Mongrel::Const::REQUEST_METHOD] || Mongrel::Const::GET
-      
+      $log.debug("Method? " + @request_method)
       # REST over GET
-      if (REST_OVER_GET_ALLOWED && @request_method === GET && request.params["method"] != nil) then
-        @request_method = request.params["method"]
-      end
+      #if (REST_OVER_GET_ALLOWED && @request_method === GET && request.params["method"] != nil) then
+      #  @request_method = request.params["method"]
+      #end
       
       if (@request_method != HEAD &&
           @request_method != GET &&
