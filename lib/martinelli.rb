@@ -56,36 +56,74 @@ module Martinelli
 
     def initialize
       puts "__FILE__: " + File.dirname(__FILE__)
-      puts $LOAD_PATH
-      config_file = File.dirname(__FILE__) + "/../config/serialdevices.json"
-      # TODO File error checking
-      config_file = File.open(config_file, "r")
-      # TODO JSON Parsing error checking
-      config = JSON(config_file.read)
-      config_file.close
-      
-      @serial_devices = Hash.new
-      
-      # SerialDevice should check sanity of params
-      for i in config
-        $log.debug(i)
-        begin
-          serial_device_name = i[0]
-          serial_device = SerialDevice.new(i[1]["port"], i[1]["baud"], i[1]["dataBits"], i[1]["stopBits"], i[1]["parityBits"], i[1]["style"])
-          serial_device.open # TODO Error Checking!
-            
-          if (serial_device.style == "LISTEN")
-            serial_device.listen # thread
-          end
 
-          @serial_devices[serial_device_name] = serial_device
-          
-          $log.info("\"" + serial_device_name + "\" initialized!")
-        rescue Errno::ENOENT => e # device doesn't exist
-          $log.error(serial_device_name + ": " + i[1]["port"] + " does not exist!")
+      @serial_devices = Hash.new
+      dirname = File.dirname(__FILE__) + "/../config/"
+      Dir.foreach dirname do |basename|
+        #$log.debug(File.ftype(path + filename))
+        filename = dirname + basename
+        if File.file? filename then
+          $log.debug(filename)
+          File.open(filename, "r") do |config_file|
+            begin
+              config = JSON(config_file.read)
+              raise ArgumentError, "Resource name not specified", caller if config["name"].nil?
+              raise ArgumentError, "Port not specified", caller if config["port"].nil?
+
+              config["baud"] = config["baud"] || 2400
+              config["dataBits"] = config["dataBits"] || 8
+              config["stopBits"] = config["stopBits"] || 1
+              config["parityBits"] = config["parityBits"] || 0
+              $log.debug(config)
+ 
+              serial_device = SerialDevice.new(config["port"], config["baud"], config["dataBits"], config["stopBits"], config["parityBits"], config["style"])
+              serial_device.open
+              if (serial_device.style == "LISTEN")
+                serial_device.listen # thread
+              end
+              @serial_devices[config["name"]] = serial_device
+              $log.info("\"" + config["name"] + "\" initialized!")
+            # don't know why this isn't working
+            #rescue JSON::ParserError => e
+            #  $log.error("Bad JSON from " + filename)
+            rescue Errno::ENOENT => e # device doesn't exist
+              $log.error(config["name"] + ": " + config["port"] + " does not exist!")
+            end
+          end
         end
       end
-    end
+        
+      # config_file = File.dirname(__FILE__) + "/../config/serialdevices.json"
+      # # TODO File error checking
+      # config_file = File.open(config_file, "r")
+      # # TODO JSON Parsing error checking
+      # config = JSON(config_file.read)
+      # config_file.close
+      # 
+      # @serial_devices = Hash.new
+      
+      # SerialDevice should check sanity of params
+      # for i in config
+      #   $log.debug(i)
+      #   begin
+      #     serial_device_name = i[0]
+      #     serial_device = SerialDevice.new(i[1]["port"], i[1]["baud"], i[1]["dataBits"], i[1]["stopBits"], i[1]["parityBits"], i[1]["style"])
+      #     serial_device.open # TODO Error Checking!
+      #     
+      #     # it makes more sense to listen to all devices, no?
+      #     if (serial_device.style == "LISTEN")
+      #       serial_device.listen # thread
+      #     end
+      # 
+      #     @serial_devices[serial_device_name] = serial_device
+      #     
+      #     $log.info("\"" + serial_device_name + "\" initialized!")
+      #   rescue Errno::ENOENT => e # device doesn't exist
+      #     $log.error(serial_device_name + ": " + i[1]["port"] + " does not exist!")
+      #   end
+      # end      
+      
+    end # initialize
     
     #
     # PROCESS

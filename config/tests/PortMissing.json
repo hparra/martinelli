@@ -1,0 +1,9 @@
+{
+	"name": "accelerometer",
+	"style": "LISTEN",
+	"format": "ASCII",
+	"delimiter": "\r\n",
+	"baud": 2400,
+	"stopBits": 1,
+	"parityBits": 0
+}
