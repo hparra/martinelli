@@ -60,13 +60,14 @@ module Martinelli
       @serial_devices = Hash.new
       dirname = File.dirname(__FILE__) + "/../config/"
       Dir.foreach dirname do |basename|
-        #$log.debug(File.ftype(path + filename))
         filename = dirname + basename
         if File.file? filename then
-          $log.debug(filename)
+          $log.debug("Opening " + filename)
           File.open(filename, "r") do |config_file|
             begin
               config = JSON(config_file.read)
+              $log.debug(config)
+              
               raise ArgumentError, "Resource name not specified", caller if config["name"].nil?
               raise ArgumentError, "Port not specified", caller if config["port"].nil?
 
@@ -74,8 +75,7 @@ module Martinelli
               config["dataBits"] = config["dataBits"] || 8
               config["stopBits"] = config["stopBits"] || 1
               config["parityBits"] = config["parityBits"] || 0
-              $log.debug(config)
- 
+              
               serial_device = SerialDevice.new(config["port"], config["baud"], config["dataBits"], config["stopBits"], config["parityBits"], config["style"])
               serial_device.open
               if (serial_device.style == "LISTEN")
