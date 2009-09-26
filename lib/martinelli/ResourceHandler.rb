@@ -93,7 +93,7 @@ module Martinelli
       # right now it's equivalent to QUERY_STRING
       # but it may be JSON or XML
       #@body = Mongrel::HttpRequest.query_parse(request.body.string)
-      @body = request.body.string
+      @body =  request.body.string
 
       return request, response # do we even need to be sending these this back? they weren't changed
     end

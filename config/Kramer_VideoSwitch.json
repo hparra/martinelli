@@ -1,0 +1,10 @@
+{
+	"name": "videoswitch",
+	"style": "INPUT",
+	"format": "HEX",
+	"length": 4,
+	"port": "\/dev\/tty.usbserial4",
+	"baud": 9600,
+	"stopBits": 1,
+	"parityBits": 0
+}

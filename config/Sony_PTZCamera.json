@@ -1,0 +1,10 @@
+{
+	"name": "ptzcamera",
+	"style": "INPUT",
+	"format": "HEX",
+	"delimiter": "FF",
+	"port": "\/dev\/tty.usbserial",
+	"baud": 9600,
+	"stopBits": 1,
+	"parityBits": 0
+}

@@ -1,0 +1,10 @@
+{
+	"name": "scale",
+	"style": "LISTEN",
+	"format": "ASCII",
+	"delimiter": "\r\n",
+	"port": "\/dev\/tty.usbserial-A8003WbS",
+	"baud": 2400,
+	"stopBits": 1,
+	"parityBits": 0
+}

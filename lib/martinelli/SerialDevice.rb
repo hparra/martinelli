@@ -13,14 +13,14 @@ module Martinelli
   
     # constructor
     #
-    def initialize(port, baud_rate, data_bits, stop_bits, parity, style)
+    def initialize(port, baud_rate, data_bits, stop_bits, parity)
       # TODO: Check sanity of params
       @port = port
       @baud_rate = baud_rate
       @data_bits = data_bits
       @stop_bits = stop_bits
       @parity = parity
-      @style = style
+      #@style = style
       @connected_devices = []
       @buffer = "EMPTY"
       @listener = nil
@@ -32,19 +32,9 @@ module Martinelli
     # open connection to device
     #
     def open
-      if @serial_port.nil? then        begin
-          # make connection
-          @serial_port = SerialPort.new(@port, @baud_rate, @data_bits, @stop_bits, @parity)
-        rescue ArgumentError => e
-          # wrong argument to SerialPort
-          raise
-        rescue Errno::ENOENT => e
-          # device doesn't exist
-          raise
-        rescue Errno::EBUSY => e
-          # device is in use by another program
-          raise
-        end
+      if @serial_port.nil? then
+        # throws ArgumentError, Errno::ENOENT, Errno::EBUSY
+        @serial_port = SerialPort.new(@port, @baud_rate, @data_bits, @stop_bits, @parity)
       end
     end
 
