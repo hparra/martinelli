@@ -5,6 +5,6 @@
 	"delimiter": "\r\n",
 	"port": "\/dev\/tty.usbserial-A8003WbS",
 	"baud": 2400,
-	"stopBits": 1,
-	"parityBits": 0
+	"stop_bits": 1,
+	"parity_bits": 0
 }

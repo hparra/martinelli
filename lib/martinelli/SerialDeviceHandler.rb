@@ -8,7 +8,7 @@ module Martinelli
       puts "__FILE__: " + File.dirname(__FILE__)
 
       @serial_devices = Hash.new
-      dirname = File.dirname(__FILE__) + "/../config/"
+      dirname = File.dirname(__FILE__) + "/../../config/"
       Dir.foreach dirname do |basename|
         filename = dirname + basename
         if File.file? filename then

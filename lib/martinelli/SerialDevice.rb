@@ -26,7 +26,6 @@ module Martinelli
       @listener = nil
       @serial_port = nil
       @cat = ""
-      $log.debug("initialized")
     end
   
     # open connection to device
@@ -47,7 +46,6 @@ module Martinelli
       end
     end
     
-    # Threaded to do who knows what!
     def listen
       if (@listener.nil?)
         @listener = Thread.new do

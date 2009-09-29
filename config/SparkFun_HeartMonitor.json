@@ -3,5 +3,5 @@
     "format": "ASCII",
     "port": "\/dev\/ttyUSB0",
     "baud": 9600,
-    "stopBits": 1
+    "stop_bits": 1
 }
