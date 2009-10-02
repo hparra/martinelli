@@ -152,10 +152,20 @@ module Martinelli
     def put(params)
       puts(s)
     end
+
+    def to_json
+      {
+        "port" => @port,
+        "baud_rate" => @baud_rate,
+        "data_bits" => @data_bits,
+        "stop_bits" => @stop_bits,
+        "parity" => @parity
+      }.to_json
+    end
   
-	def to_s
-		"Hello!"
-	end
+  	def to_s
+  		"Hello!"
+  	end
   
   end
 
