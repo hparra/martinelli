@@ -3,7 +3,7 @@
 	"format": "ASCII",
 	"delimiter": "\r\n",
 	"port": "\/dev\/tty.usbserial",
-	"baud": 2400,
+	"baud_rate": 2400,
 	"data_bits": 8,
 	"stop_bits": 1,
 	"make": "Healthometer",

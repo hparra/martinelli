@@ -45,15 +45,9 @@ module Martinelli
         
         raise ArgumentError, "Resource name not specified", caller if name.nil?
         #raise KeyError, "URI in use", caller if @devices.has_key?(name)
-        raise ArgumentError, "Port not specified", caller if params["port"].nil?      
+        raise ArgumentError, "Port not specified", caller if params["port"].nil?
         
-        # defaults
-        params["baud"] = params["baud"] || 2400
-        params["data_bits"] = params["data_bits"] || 8
-        params["stop_bits"] = params["stop_bits"] || 1
-        params["parity_bits"] = params["parity_bits"] || 0
-        
-        device = SerialDevice.new(params["port"], params["baud"], params["data_bits"], params["stop_bits"], params["parity_bits"])
+        device = SerialDevice.new(json_params)
         device.open
         device.listen # returns thread? or should device keep it?
         @devices[name] = device

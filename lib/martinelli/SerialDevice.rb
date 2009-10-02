@@ -8,24 +8,32 @@ module Martinelli
   class SerialDevice
   
     attr_reader :buffer
-    attr_reader :style
-    #attr_reader :delimeter
+    attr_reader :listener
   
-    # constructor
-    #
-    def initialize(port, baud_rate, data_bits, stop_bits, parity)
-      # TODO: Check sanity of params
-      @port = port
-      @baud_rate = baud_rate
-      @data_bits = data_bits
-      @stop_bits = stop_bits
-      @parity = parity
-      #@style = style
-      @connected_devices = []
+    # {
+    #   "port": {String}
+    #   "format": "ASCII" | "HEX" ,
+    #   "delimeter": {String},
+    #   "baud_rate": [0, 100000],
+    #   "data_bits": [6, 8],
+    #   "stop_bits": 0 | 1 | 2,
+    #   "parity": 0 | 1
+    # }
+    def initialize(json_object)
+      @params = JSON(json_object)
+
+      # @params["port"] required
+      @params["baud_rate"] = @params["baud_rate"].to_i || 2400
+      @params["data_bits"] = @params["data_bits"] || 8
+      @params["stop_bits"] = @params["stop_bits"] || 1
+      @params["parity"] = @params["parity"] || 0
+      
+      @params["format"] = @params["format"] || "ASCII"
+      @params["delimeter"] = @params["delimeter"] || "\r"
+      
       @buffer = "EMPTY"
       @listener = nil
       @serial_port = nil
-      @cat = ""
     end
   
     # open connection to device
@@ -33,7 +41,8 @@ module Martinelli
     def open
       if @serial_port.nil? then
         # throws ArgumentError, Errno::ENOENT, Errno::EBUSY
-        @serial_port = SerialPort.new(@port, @baud_rate, @data_bits, @stop_bits, @parity)
+        @serial_port = SerialPort.new(@params["port"], @params["baud_rate"], @params["data_bits"], @params["stop_bits"], @params["parity"])        
+        puts @serial_port.modem_params.to_s
       end
     end
 
@@ -41,7 +50,7 @@ module Martinelli
     #
     def close
       if !@serial_port.nil? then
-        @serial_port.close()
+        @serial_port.close
         @serial_port = nil
       end
     end
@@ -49,23 +58,20 @@ module Martinelli
     def listen
       if (@listener.nil?)
         @listener = Thread.new do
-		  $log.debug("Creating new thread!")
+		      $log.debug("Creating new thread!")
           loop do
 			#sleep(0.1) # Why windows needs this, i don't know.
 			# read timeout?
-            @buffer = @serial_port.gets
-			Thread.pass
+            @buffer = getz
+			      #Thread.pass
           end
         end
         @listener.run
       end
-      
     end
-    
-    
-    
+
     def listening?
-      return !@listener.nil?
+      return @listener != nil
     end
     
     def deaf
@@ -79,23 +85,25 @@ module Martinelli
       @serial_port.flush()
     end
     
-    def post(s)
-      @serial_port.write(s)
-      return @serial_port.gets
-    end
-    
-    # writes a string
-    def write(s)
-      @serial_port.write(s)
-    end
-    
-    def read
-      return "Not yet implemented"
-    end
-    
     def getc
       return @serial_port.getc
     end
+    
+    def gets
+      return @serial_port.gets(@params["delimiter"])
+    end
+    
+    def getz
+      s = ""
+      loop do
+        c = @serial_port.getc
+        s += c.chr
+        if c.chr == @params["delimeter"] then
+         return s
+        end
+      end
+    end
+
     
     # LAME!
     def slow_write(s, delay = 0.01)
@@ -105,26 +113,6 @@ module Martinelli
         $log.debug("Wrote: " + ch)
         sleep(delay)
       end
-    end
-
-
-    # Overloaded puts. Blocks.
-    #
-    def puts(s)
-      # standard puts does not work
-      # should we send '\r' here too?
-      @serial_port << s
-    end
-
-    # Overloaded gets. Blocks.
-    #
-    def gets(delimiter = "\r")
-      @serial_port.gets(delimiter)
-    end
-
-    # get. Non-blocking.
-    def q_gets
-      
     end
 
     # hackery please fix me
@@ -147,24 +135,14 @@ module Martinelli
       return value
     end
 
-    #
-    #
-    def put(params)
-      puts(s)
-    end
+
 
     def to_json
-      {
-        "port" => @port,
-        "baud_rate" => @baud_rate,
-        "data_bits" => @data_bits,
-        "stop_bits" => @stop_bits,
-        "parity" => @parity
-      }.to_json
+      return @params.to_json
     end
   
   	def to_s
-  		"Hello!"
+  		return to_json
   	end
   
   end
