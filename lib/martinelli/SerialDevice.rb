@@ -17,7 +17,14 @@ module Martinelli
     #   "baud_rate": [0, 100000],
     #   "data_bits": [6, 8],
     #   "stop_bits": 0 | 1 | 2,
-    #   "parity": 0 | 1
+    #   "parity": 0 | 1,
+    #   "make": {String},
+    #   "model": {String},
+    #   "description": {String},
+    #   "keywords": [{String}*],
+    #   "details": {
+    #     ({String}: {String})*
+    #   }
     # }
     def initialize(json_object)
       @params = JSON(json_object)
@@ -29,7 +36,14 @@ module Martinelli
       @params["parity"] = @params["parity"] || 0
       
       @params["format"] = @params["format"] || "ASCII"
-      @params["delimeter"] = @params["delimeter"] || "\r"
+      @params["delimeter"] = @params["delimeter"] || "\r\n"
+      
+      # Maybe we want to leave these as empty strings?
+      @params["make"] = @params["make"] || "Unknown Manufacturer"
+      @params["model"] = @params["model"] || "Unknown Model"
+      @params["description"] = @params["description"] || "No Description"
+      @params["keywords"] = @params["keywords"] || []
+      @params["details"] = @params["details"] || {}
       
       @buffer = "EMPTY"
       @listener = nil
@@ -58,7 +72,7 @@ module Martinelli
     def listen
       if (@listener.nil?)
         @listener = Thread.new do
-		      $log.debug("Creating new thread!")
+		      $log.debug("Creating new thread for " + @params["make"] + " " + @params["model"])
           loop do
 			#sleep(0.1) # Why windows needs this, i don't know.
 			# read timeout?
@@ -90,6 +104,7 @@ module Martinelli
     end
     
     def gets
+      # is this correct?
       return @serial_port.gets(@params["delimiter"])
     end
     
@@ -98,6 +113,7 @@ module Martinelli
       loop do
         c = @serial_port.getc
         s += c.chr
+        # TODO: Check for multicharacter delimeters
         if c.chr == @params["delimeter"] then
          return s
         end

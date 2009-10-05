@@ -83,8 +83,8 @@ module Martinelli
     end
 
     # HEAD /devices/{device}
-    def read_device_metadata
-      return 200, "device info here"
+    def read_device_metadata(name)
+      return 200, @devices[name].to_json
     end
 
     # GET /devices/{device}
@@ -123,10 +123,25 @@ module Martinelli
     end
     
 
-    
     def process(request, response)
       request, response = preprocess(request, response)
       content_type = "text/plain" #"application/json"
+
+      query = Mongrel::HttpRequest.query_parse(request.params["QUERY_STRING"])
+
+      # request method
+      @request_method = request.params[Mongrel::Const::REQUEST_METHOD] || GET
+      if (@request_method == GET && query["method"] != nil) then
+        @request_method = query["method"]
+      end
+      
+      
+      @body = request.body.string
+
+      $log.debug("Method? " + @request_method)
+      $log.debug("Body? " + @body)
+
+
 
       # messy routing
       request_path = request.params["REQUEST_PATH"]
