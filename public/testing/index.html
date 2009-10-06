@@ -60,6 +60,23 @@
 					});
 					
 				},
+				postDevice: function() {
+					device_name = $("#post_device_name").val();
+					post_data_string = $("#post_input").val();
+					$.ajax({
+						type: "POST",
+						url: "/devices/" + device_name,
+						contentType: "application/json; charset=UTF-8",
+						data: post_data_string,
+						complete: function (xhr, status) {
+							if (xhr.status === 201) // "Created"
+								console.debug("Response: " + xhr.responseText);
+							else
+								console.debug("Error");
+						}
+					});
+					
+				},
 				getDevice: function() {
 					device_name = $("#get_device_name").val();
 					$.ajax({
@@ -106,6 +123,9 @@
 			</ul>
 			<a href="#" onclick="Martinelli.getDevice()">GET /devices/</a><input type="text" id="get_device_name" name="get_device_name" /><br />
 			<a href="#" onclick="Martinelli.deleteDevice()">DELETE /devices/</a><input type="text" id="delete_device_name" name="delete_device_name" /><br />
+			<a href="#" onclick="Martinelli.postDevice()">POST /devices/</a><input type="text" id="post_device_name" name="post_device_name" /><br /><ul>
+				<li>Input: <input type="text" id="post_input" name="post_input" /></li>
+			</ul>
 		</div>
 	</body>
 </html>
