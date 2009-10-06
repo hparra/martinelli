@@ -30,7 +30,7 @@ module Martinelli
       @params = JSON(json_object)
 
       # @params["port"] required
-      @params["baud_rate"] = @params["baud_rate"].to_i || 2400
+      @params["baud_rate"] = @params["baud_rate"] || 2400
       @params["data_bits"] = @params["data_bits"] || 8
       @params["stop_bits"] = @params["stop_bits"] || 1
       @params["parity"] = @params["parity"] || 0
@@ -64,6 +64,7 @@ module Martinelli
     #
     def close
       if !@serial_port.nil? then
+        deafen
         @serial_port.close
         @serial_port = nil
       end
@@ -88,10 +89,12 @@ module Martinelli
       return @listener != nil
     end
     
-    def deaf
+    def deafen
       if (@listener)
+        $log.debug("Deafening listener...")
+        @serial_port.flush
         @listener.exit
-        @listener = null
+        @listener = nil
       end
     end
     

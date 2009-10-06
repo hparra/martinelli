@@ -26,13 +26,20 @@
 				putDevice: function() {
 					device_name = $("#device_name").val();
 					
+					// TODO: is there a better way to do this?
+					delimeter = $("#delimeter").val().toString()
+					delimeter = delimeter.replace(/\\n/, "\n")
+					delimeter = delimeter.replace(/\\r/, "\r")
+					//delimeter = delimeter.replace(/\\u/, "\u")
+					
 					// TODO: validation
 					put_data = {
 						"port": $("#port").val().toString(),
-						"baud": $("#baud").val().toString(),
-						"data_bits": $("#data_bits").val().toString(),
-						"stop_bits": $("#stop_bits").val().toString(),
-						"parity_bits": $("#parity_bits").val().toString()
+						"baud_rate": parseInt($("#baud_rate").val()),
+						"data_bits": parseInt($("#data_bits").val()),
+						"stop_bits": parseInt($("#stop_bits").val()),
+						"parity_bits": parseInt($("#parity_bits").val()),
+						"delimeter": delimeter
 					};
 					put_data_string = $.toJSON(put_data);
 					
@@ -52,6 +59,32 @@
 						}
 					});
 					
+				},
+				getDevice: function() {
+					device_name = $("#get_device_name").val();
+					$.ajax({
+						type: "GET",
+						url: "/devices/" + device_name,
+						complete: function (xhr, status) {
+							if (xhr.status === 200) // "OK"
+								console.debug("Response: " + xhr.responseText);
+							else
+								console.debug("Error");
+						}
+					});
+				},
+				deleteDevice: function() {
+					device_name = $("#delete_device_name").val();
+					$.ajax({
+						type: "DELETE",
+						url: "/devices/" + device_name,
+						complete: function (xhr, status) {
+							if (xhr.status === 200) // "OK"
+								console.debug("Response: " + xhr.responseText);
+							else
+								console.debug("Error");
+						}
+					});
 				}
 			};
 		</script>
@@ -65,11 +98,14 @@
 			<a href="#" onclick="Martinelli.putDevice()">PUT /devices/</a><input type="text" id="device_name" name="device_name" /><br />
 			<ul>
 				<li>Port: <input type="text" id="port" name="port" /></li>
-				<li>Baud: <input type="text" id="baud" name="baud" /></li>
+				<li>Baud Rate: <input type="text" id="baud_rate" name="baud_rate" /></li>
 				<li>Data Bits: <input type="text" id="data_bits" name="data_bits" /></li>
 				<li>Stop Bits: <input type="text" id="stop_bits" name="stop_bits" /></li>
 				<li>Parity Bits: <input type="text" id="parity_bits" name="parity_bits" /></li>
+				<li>Delimeter: <input type="text" id="delimeter" name="delimeter" /></li>
 			</ul>
+			<a href="#" onclick="Martinelli.getDevice()">GET /devices/</a><input type="text" id="get_device_name" name="get_device_name" /><br />
+			<a href="#" onclick="Martinelli.deleteDevice()">DELETE /devices/</a><input type="text" id="delete_device_name" name="delete_device_name" /><br />
 		</div>
 	</body>
 </html>
