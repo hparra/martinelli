@@ -79,7 +79,16 @@ module Martinelli
 
     # DELETE /devices/{device}
     def delete_device(name)
-      return 200, "Device deleted"
+      if @devices.has_key? name then
+        @devices[name].close
+        @devices.delete(name)
+        response_code = 200
+        response_content = "/devices/" + name + " has been deleted"
+      else
+        response_code = 404
+        response_content = "No such device"
+      end
+      return response_code, response_content
     end
 
     # HEAD /devices/{device}
@@ -131,17 +140,18 @@ module Martinelli
 
       # request method
       @request_method = request.params[Mongrel::Const::REQUEST_METHOD] || GET
-      if (@request_method == GET && query["method"] != nil) then
+      if @request_method == GET && query["method"] != nil then
         @request_method = query["method"]
       end
       
-      
-      @body = request.body.string
+      if query["body"] != nil then
+        body = query["body"]
+      else
+        body = request.body.string
+      end
 
-      $log.debug("Method? " + @request_method)
-      $log.debug("Body? " + @body)
-
-
+      $log.debug("method=" + @request_method)
+      $log.debug("body=" + body)
 
       # messy routing
       request_path = request.params["REQUEST_PATH"]
@@ -164,7 +174,7 @@ module Martinelli
             when GET
               response_code, response_content = read_device(device_name)
             when POST
-              response_code, response_content = update_device(device_name)
+              response_code, response_content = update_device(device_name, body)
             when DELETE
               response_code, response_content = delete_device(device_name)
             when HEAD
@@ -178,7 +188,7 @@ module Martinelli
             end
           else # device does not exist
             if @request_method == PUT then
-              response_code, response_content = create_device(device_name)
+              response_code, response_content = create_device(device_name, body)
             else
               response_code = 400
               response_content = "device does not exist"
