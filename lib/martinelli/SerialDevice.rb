@@ -117,17 +117,18 @@ module Martinelli
         c = @serial_port.getc
         s += c.chr
         # TODO: Check for multicharacter delimeters
-        if c.chr == @params["delimeter"] then
+        $log.debug("Ack! " + s)
+        if c.chr == @params["delimiter"] then
          return s
         end
       end
     end
 
     def putz(s)
-      for i in s
-        ch = s[i]
+      s.each_byte do |ch|
         @serial_port.putc(ch)
-        $log.debug("Wrote: " + ch)
+        @serial_port.flush
+        $log.debug("Wrote: " + ch.chr)
       end
     end
     

@@ -1,7 +1,7 @@
 {
 	"name": "HRT_VSA-YCA",
 	"format": "ASCII",
-	"port": "\/dev\/tty.usbserial7",
+	"port": "\/dev\/tty.usbserial1",
 	"delimiter": "\n",
 	"baud_rate": 4800,
 	"data_bits": 8,

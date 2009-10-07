@@ -16,12 +16,11 @@ require 'martinelli/Helpers'
 
 params = {
   "port" => ARGV[0].to_s, # required
-  "format" => ARGV[1] || "ASCII",
-  "delimeter" => ARGV[2] || "\r",
-  "baud_rate" => ARGV[3] || 2400,
-  "data_bits" => ARGV[4] || 8,
-  "stop_bits" => ARGV[5] || 1,
-  "parity" => ARGV[6].to_i || SerialPort::NONE
+  "baud_rate" => ARGV[1].to_i || 2400,
+  "data_bits" => ARGV[2] || 8,
+  "stop_bits" => ARGV[3] || 1,
+  "parity" => ARGV[4].to_i || SerialPort::NONE,
+  "delimiter" => ARGV[5] || "\r"
 }.to_json
 
 # create connection
@@ -52,20 +51,9 @@ begin
     end
     t.join
     
-    # while (s = tty.gets) do                 # while there is input
-    #   # TODO: Write hex if HEX, etc.
-    #   if(params["format"].to_s.upcase == "HEX")
-    #     s = hexify(s)
-    #     if(s != "")
-    #      sp.write(s.sub("\n", "\r").to_i(16)) # send line
-    #     else
-    #       puts "Error, invalid character"
-    #     end
-    #   else # If ASCII then do this.
-    #      sp.write(s.sub("\n", "\r"))
-    #   end
-    #   #s.scan(/../).each { | tuple | sp.putc tuple.hex.chr }
-    # end
+    while (c = tty.getc) do                 # while there is input
+      sp.putc(c)
+    end
   end
 rescue Interrupt                            # catch ctrl-c
   sp.flush                                  # flush one last tlsime

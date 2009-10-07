@@ -157,8 +157,11 @@
 						data_string = $.toJSON(put_data);
 						console.debug("Request: PUT /device/" + device_name + "\r\n" + data_string);
 					} else if (currentForm == 'post') {
+						post_input = $("#post_input").val().toString()
+						post_input = post_input.replace(/\\n/, "\n")
+						post_input = post_input.replace(/\\r/, "\r")
 						post_data = {
-							input: $("#post_input").val(),
+							input: post_input,
 						};
 						data_string = $.toJSON(post_data);
 					} else {
