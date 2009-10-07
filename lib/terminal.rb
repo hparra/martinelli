@@ -20,7 +20,7 @@ params = {
   "data_bits" => ARGV[2] || 8,
   "stop_bits" => ARGV[3] || 1,
   "parity" => ARGV[4].to_i || SerialPort::NONE,
-  "delimiter" => ARGV[5] || "\r"
+  "delimiter" => ARGV[5] || "\r\n"
 }.to_json
 
 # create connection
@@ -38,7 +38,8 @@ begin
     # reading
     t = Thread.new do
       loop do
-        tty.printf("%s", sp.getz)
+        tty.printf("%s", sp.gets)
+        puts "\n"
         #tty.printf("%X", sp.getc)            # output data
         # TODO: Print hex if HEX, etc
         # if(params["format"].to_s.upcase == "HEX")
@@ -49,11 +50,14 @@ begin
         # end
       end
     end
-    t.join
     
-    while (c = tty.getc) do                 # while there is input
-      sp.putc(c)
+    while (c = tty.gets) do                 # while there is input
+      sp.putz(c)
     end
+    # loop do                 # while there is input
+    #   sleep(1)
+    #   sp.putz("V\r")
+    # end
   end
 rescue Interrupt                            # catch ctrl-c
   sp.flush                                  # flush one last tlsime

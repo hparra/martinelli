@@ -132,7 +132,7 @@ module Martinelli
         
         body = JSON(json_body)
         # should check for input field
-        
+        $log.debug "UPDATE:" + body["input"].dump + body["input"].length.to_s
         @devices[name].putz body["input"]
         
         response_code = 200

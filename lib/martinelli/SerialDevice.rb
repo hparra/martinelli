@@ -77,7 +77,7 @@ module Martinelli
           loop do
 			#sleep(0.1) # Why windows needs this, i don't know.
 			# read timeout?
-            @buffer = getz
+            @buffer = gets
 			      #Thread.pass
           end
         end
@@ -99,7 +99,7 @@ module Martinelli
     end
     
     def flush
-      @serial_port.flush()
+      @serial_port.flush
     end
     
     def getc
@@ -107,7 +107,6 @@ module Martinelli
     end
     
     def gets
-      # is this correct?
       return @serial_port.gets(@params["delimiter"])
     end
     
@@ -115,12 +114,14 @@ module Martinelli
       s = ""
       loop do
         c = @serial_port.getc
-        s += c.chr
+        
         # TODO: Check for multicharacter delimeters
-        $log.debug("Ack! " + s)
+        #$log.debug("Ack! " + s)
         if c.chr == @params["delimiter"] then
          return s
         end
+        
+        s += c.chr
       end
     end
 
@@ -128,7 +129,7 @@ module Martinelli
       s.each_byte do |ch|
         @serial_port.putc(ch)
         @serial_port.flush
-        $log.debug("Wrote: " + ch.chr)
+        #$log.debug("Wrote: " + ch.chr)
       end
     end
     
