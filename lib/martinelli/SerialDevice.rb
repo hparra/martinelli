@@ -36,7 +36,7 @@ module Martinelli
       @params["parity"] = @params["parity"] || 0
       
       @params["format"] = @params["format"] || "ASCII"
-      @params["delimeter"] = @params["delimeter"] || "\r\n"
+      @params["delimiter"] = @params["delimiter"] || "\r\n"
       
       # Maybe we want to leave these as empty strings?
       @params["make"] = @params["make"] || "Unknown Manufacturer"
@@ -123,6 +123,13 @@ module Martinelli
       end
     end
 
+    def putz(s)
+      for i in s
+        ch = s[i]
+        @serial_port.putc(ch)
+        $log.debug("Wrote: " + ch)
+      end
+    end
     
     # LAME!
     def slow_write(s, delay = 0.01)

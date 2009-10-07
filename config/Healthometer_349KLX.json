@@ -1,7 +1,7 @@
 {
 	"name": "Healthometer_349KLX",
 	"format": "ASCII",
-	"delimeter": "\r",
+	"delimiter": "\r",
 	"port": "\/dev\/tty.usbserial",
 	"baud_rate": 2400,
 	"data_bits": 8,

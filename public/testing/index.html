@@ -39,19 +39,19 @@
 		<script src="jquery.json-2.2.js"></script>
 		<script type="text/javascript">
 			Martinelli = {
-				// getDevices: function() { // GET /devices
-				// 	console.debug("Request: GET /devices")
-				// 	$.ajax({
-				// 		type: "GET",
-				// 		url: "/devices",
-				// 		complete: function (xhr, status) {
-				// 			if (xhr.status === 200) // "OK"
-				// 				console.debug("Response: " + xhr.responseText);
-				// 			else
-				// 				console.debug("Error");
-				// 		}
-				// 	});
-				// },
+				getDevices: function() { // GET /devices
+					console.debug("Request: GET /devices")
+					$.ajax({
+						type: "GET",
+						url: "/devices",
+						complete: function (xhr, status) {
+							if (xhr.status === 200) // "OK"
+								console.debug("Response: " + xhr.responseText);
+							else
+								console.debug("Error");
+						}
+					});
+				},
 				// putDevice: function() {
 				// 	//device_name = $("#device_name").val();
 				// 	device_name = $("#device_name").val();
@@ -141,10 +141,9 @@
 					
 					if (currentForm == 'put') {
 						// TODO: is there a better way to do this?
-						delimeter = $("#delimeter").val().toString()
-						delimeter = delimeter.replace(/\\n/, "\n")
-						delimeter = delimeter.replace(/\\r/, "\r")
-						//delimeter = delimeter.replace(/\\u/, "\u")
+						delimiter = $("#delimiter").val().toString()
+						delimiter = delimiter.replace(/\\n/, "\n")
+						delimiter = delimiter.replace(/\\r/, "\r")
 
 						// TODO: validation
 						put_data = {
@@ -153,12 +152,15 @@
 							"data_bits": parseInt($("#data_bits").val()),
 							"stop_bits": parseInt($("#stop_bits").val()),
 							"parity_bits": parseInt($("#parity_bits").val()),
-							"delimeter": delimeter
+							"delimiter": delimiter
 						};
 						data_string = $.toJSON(put_data);
 						console.debug("Request: PUT /device/" + device_name + "\r\n" + data_string);
 					} else if (currentForm == 'post') {
-						data_string = $("#post_input").val();
+						post_data = {
+							input: $("#post_input").val(),
+						};
+						data_string = $.toJSON(post_data);
 					} else {
 						data_string = "";
 					}
@@ -237,7 +239,7 @@
 							<li>Data Bits: <input type="text" id="data_bits" name="data_bits" /></li>
 							<li>Stop Bits: <input type="text" id="stop_bits" name="stop_bits" /></li>
 							<li>Parity Bits: <input type="text" id="parity_bits" name="parity_bits" /></li>
-							<li>Delimeter: <input type="text" id="delimeter" name="delimeter" /></li>
+							<li>Delimeter: <input type="text" id="delimiter" name="delimiter" /></li>
 						</ul>
 					</div>
 					<div class="form_div" id="head_form">

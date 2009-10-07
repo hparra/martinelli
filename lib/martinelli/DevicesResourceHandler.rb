@@ -102,7 +102,7 @@ module Martinelli
     end
     
     # POST /devices/{device}
-    def update_device(name, body)
+    def update_device(name, json_body)
       # if (@body != nil && @body != "") then
       # 
       #   # TODO
@@ -128,8 +128,19 @@ module Martinelli
       #   end
       # 
       # end
-      response_code = 200
-      response_content = body.to_s
+      if @devices.has_key? name then
+        
+        body = JSON(json_body)
+        # should check for input field
+        
+        @devices[name].putz body["input"]
+        
+        response_code = 200
+        response_content = body["input"]
+      else
+        response_code = 404
+        response_content = "No such device"
+      end
       
       return response_code, response_content
     end
