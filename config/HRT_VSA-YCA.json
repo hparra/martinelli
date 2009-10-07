@@ -1,8 +1,14 @@
 {
 	"name": "HRT_VSA-YCA",
 	"format": "ASCII",
-	"port": "\/dev\/ttyS0",
-	"delimiter": "\r\n",
-	"baud": 4800,
-	"stop_bits": 1
+	"port": "\/dev\/tty.usbserial7",
+	"delimiter": "\n",
+	"baud_rate": 4800,
+	"data_bits": 8,
+	"stop_bits": 1,
+	"make": "Hall Research Technologies",
+	"model": "YS4-YCA",
+	"description": "4x1 S-Video Switch with Audio and Serial Control",
+	"details": {
+	}
 }

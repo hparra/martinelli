@@ -129,6 +129,9 @@ module Martinelli
       # 
       # end
       response_code = 200
+      response_content = body.to_s
+      
+      return response_code, response_content
     end
     
 
