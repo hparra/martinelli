@@ -6,110 +6,196 @@
 		<style type="text/css" media="all">
 		</style>
 		<title>HBOX</title>
+		<style type="text/css" media="screen">
+			.form_div {
+				display: none;
+			}
+			
+			.section {
+				position: absolute;
+				width: 48%;
+				height: 100%;
+				left: 0px;
+				top: 0px;
+				padding-left: 1%;
+				padding-right: 1%;
+			}
+			
+			.console {
+				position: absolute;
+				width: 50%;
+				height: 100%;
+				left: 50%;
+				top: 0px;
+				background-color: black;
+			}
+			
+			fieldset {
+				border: 1px solid black;
+				background-color: #c0c0c0;
+			}
+		</style>
 		<script src="jquery-1.3.2.js"></script>
 		<script src="jquery.json-2.2.js"></script>
 		<script type="text/javascript">
 			Martinelli = {
-				getDevices: function() { // GET /devices
-					console.debug("Request: GET /devices")
-					$.ajax({
-						type: "GET",
-						url: "/devices",
-						complete: function (xhr, status) {
-							if (xhr.status === 200) // "OK"
-								console.debug("Response: " + xhr.responseText);
-							else
-								console.debug("Error");
-						}
-					});
-				},
-				putDevice: function() {
+				// getDevices: function() { // GET /devices
+				// 	console.debug("Request: GET /devices")
+				// 	$.ajax({
+				// 		type: "GET",
+				// 		url: "/devices",
+				// 		complete: function (xhr, status) {
+				// 			if (xhr.status === 200) // "OK"
+				// 				console.debug("Response: " + xhr.responseText);
+				// 			else
+				// 				console.debug("Error");
+				// 		}
+				// 	});
+				// },
+				// putDevice: function() {
+				// 	//device_name = $("#device_name").val();
+				// 	device_name = $("#device_name").val();
+				// 	
+				// 	// TODO: is there a better way to do this?
+				// 	delimeter = $("#delimeter").val().toString()
+				// 	delimeter = delimeter.replace(/\\n/, "\n")
+				// 	delimeter = delimeter.replace(/\\r/, "\r")
+				// 	//delimeter = delimeter.replace(/\\u/, "\u")
+				// 	
+				// 	// TODO: validation
+				// 	put_data = {
+				// 		"port": $("#port").val().toString(),
+				// 		"baud_rate": parseInt($("#baud_rate").val()),
+				// 		"data_bits": parseInt($("#data_bits").val()),
+				// 		"stop_bits": parseInt($("#stop_bits").val()),
+				// 		"parity_bits": parseInt($("#parity_bits").val()),
+				// 		"delimeter": delimeter
+				// 	};
+				// 	put_data_string = $.toJSON(put_data);
+				// 	
+				// 	console.debug("Request: PUT /device/" + device_name + "\r\n" + put_data_string);
+				// 	
+				// 	
+				// 	$.ajax({
+				// 		type: "PUT",
+				// 		url: "/devices/" + device_name,
+				// 		contentType: "application/json; charset=UTF-8",
+				// 		data: put_data_string,
+				// 		complete: function (xhr, status) {
+				// 			if (xhr.status === 201) // "Created"
+				// 				console.debug("Response: " + xhr.responseText);
+				// 			else
+				// 				console.debug("Error");
+				// 		}
+				// 	});
+				// 	
+				// },
+				// postDevice: function() {
+				// 	//device_name = $("#post_device_name").val();
+				// 	device_name = $("#device_name").val();
+				// 	post_data_string = $("#post_input").val();
+				// 	$.ajax({
+				// 		type: "POST",
+				// 		url: "/devices/" + device_name,
+				// 		contentType: "application/json; charset=UTF-8",
+				// 		data: post_data_string,
+				// 		complete: function (xhr, status) {
+				// 			if (xhr.status === 201) // "Created"
+				// 				console.debug("Response: " + xhr.responseText);
+				// 			else
+				// 				console.debug("Error");
+				// 		}
+				// 	});
+				// 	
+				// },
+				// getDevice: function() {
+				// 	//device_name = $("#get_device_name").val();
+				// 	device_name = $("#device_name").val();
+				// 	$.ajax({
+				// 		type: "GET",
+				// 		url: "/devices/" + device_name,
+				// 		complete: function (xhr, status) {
+				// 			if (xhr.status === 200) // "OK"
+				// 				console.debug("Response: " + xhr.responseText);
+				// 			else
+				// 				console.debug("Error");
+				// 		}
+				// 	});
+				// },
+				// deleteDevice: function() {
+				// 	//device_name = $("#delete_device_name").val();
+				// 	device_name = $("#device_name").val();
+				// 	$.ajax({
+				// 		type: "DELETE",
+				// 		url: "/devices/" + device_name,
+				// 		complete: function (xhr, status) {
+				// 			if (xhr.status === 200) // "OK"
+				// 				console.debug("Response: " + xhr.responseText);
+				// 			else
+				// 				console.debug("Error");
+				// 		}
+				// 	});
+				// },
+				xDevice: function() {
 					device_name = $("#device_name").val();
 					
-					// TODO: is there a better way to do this?
-					delimeter = $("#delimeter").val().toString()
-					delimeter = delimeter.replace(/\\n/, "\n")
-					delimeter = delimeter.replace(/\\r/, "\r")
-					//delimeter = delimeter.replace(/\\u/, "\u")
-					
-					// TODO: validation
-					put_data = {
-						"port": $("#port").val().toString(),
-						"baud_rate": parseInt($("#baud_rate").val()),
-						"data_bits": parseInt($("#data_bits").val()),
-						"stop_bits": parseInt($("#stop_bits").val()),
-						"parity_bits": parseInt($("#parity_bits").val()),
-						"delimeter": delimeter
-					};
-					put_data_string = $.toJSON(put_data);
-					
-					console.debug("Request: PUT /device/" + device_name + "\r\n" + put_data_string);
-					
+					if (currentForm == 'put') {
+						// TODO: is there a better way to do this?
+						delimeter = $("#delimeter").val().toString()
+						delimeter = delimeter.replace(/\\n/, "\n")
+						delimeter = delimeter.replace(/\\r/, "\r")
+						//delimeter = delimeter.replace(/\\u/, "\u")
+
+						// TODO: validation
+						put_data = {
+							"port": $("#port").val().toString(),
+							"baud_rate": parseInt($("#baud_rate").val()),
+							"data_bits": parseInt($("#data_bits").val()),
+							"stop_bits": parseInt($("#stop_bits").val()),
+							"parity_bits": parseInt($("#parity_bits").val()),
+							"delimeter": delimeter
+						};
+						data_string = $.toJSON(put_data);
+						console.debug("Request: PUT /device/" + device_name + "\r\n" + data_string);
+					} else if (currentForm == 'post') {
+						data_string = $("#post_input").val();
+					} else {
+						data_string = "";
+					}
 					
 					$.ajax({
-						type: "PUT",
+						type: currentForm,
 						url: "/devices/" + device_name,
 						contentType: "application/json; charset=UTF-8",
-						data: put_data_string,
+						data: data_string,
 						complete: function (xhr, status) {
-							if (xhr.status === 201) // "Created"
+							if (xhr.status === 201) { // "Created"
 								console.debug("Response: " + xhr.responseText);
-							else
-								console.debug("Error");
-						}
-					});
-					
-				},
-				postDevice: function() {
-					device_name = $("#post_device_name").val();
-					post_data_string = $("#post_input").val();
-					$.ajax({
-						type: "POST",
-						url: "/devices/" + device_name,
-						contentType: "application/json; charset=UTF-8",
-						data: post_data_string,
-						complete: function (xhr, status) {
-							if (xhr.status === 201) // "Created"
+							} else if (xhr.status === 200) { // "OK"
 								console.debug("Response: " + xhr.responseText);
-							else
+							} else {
 								console.debug("Error");
-						}
-					});
-					
-				},
-				getDevice: function() {
-					device_name = $("#get_device_name").val();
-					$.ajax({
-						type: "GET",
-						url: "/devices/" + device_name,
-						complete: function (xhr, status) {
-							if (xhr.status === 200) // "OK"
-								console.debug("Response: " + xhr.responseText);
-							else
-								console.debug("Error");
-						}
-					});
-				},
-				deleteDevice: function() {
-					device_name = $("#delete_device_name").val();
-					$.ajax({
-						type: "DELETE",
-						url: "/devices/" + device_name,
-						complete: function (xhr, status) {
-							if (xhr.status === 200) // "OK"
-								console.debug("Response: " + xhr.responseText);
-							else
-								console.debug("Error");
+							}
 						}
 					});
 				}
 			};
+			
+			var previousForm = null;
+			var currentForm = 'get';
+			
+			function switchForm(x) {
+				previousForm = currentForm;
+				currentForm = x;
+				$('#' + previousForm + '_form').hide();
+				$('#' + currentForm + '_form').fadeIn(); 
+			}
 		</script>
 	</head>
 	<body>
-		<h1>Martinelli Testing</h1>
 		<div class="section">
-			<h2>/devices</h2>
+			<h1>Martinelli Testing</h1>
+			<!-- <h2>/devices</h2>
 			<a href="#" onclick="Martinelli.getDevices()">GET /devices</a><br />
 			
 			<a href="#" onclick="Martinelli.putDevice()">PUT /devices/</a><input type="text" id="device_name" name="device_name" /><br />
@@ -125,7 +211,50 @@
 			<a href="#" onclick="Martinelli.deleteDevice()">DELETE /devices/</a><input type="text" id="delete_device_name" name="delete_device_name" /><br />
 			<a href="#" onclick="Martinelli.postDevice()">POST /devices/</a><input type="text" id="post_device_name" name="post_device_name" /><br /><ul>
 				<li>Input: <input type="text" id="post_input" name="post_input" /></li>
-			</ul>
+			</ul> -->
+			
+			<fieldset>
+				<legend>/devices</legend>
+					<input type="button" onclick="Martinelli.getDevices()" value="GET /devices" />
+					<br /><br />				
+					<select>
+						<option onclick="switchForm('get')">GET</option>
+						<option onclick="switchForm('put')">PUT</option>
+						<option onclick="switchForm('head')">HEAD</option>
+						<option onclick="switchForm('post')">POST</option>
+						<option onclick="switchForm('delete')">DELETE</option>
+					</select> /devices/ 
+					<input type="text" id="device_name" name="device_name" /> 
+					<input type="button"onclick="Martinelli.xDevice()" value="Submit" />
+					
+					<div class="form_div" id="get_form">
+						
+					</div>
+					<div class="form_div" id="put_form">
+						<ul>
+							<li>Port: <input type="text" id="port" name="port" /></li>
+							<li>Baud Rate: <input type="text" id="baud_rate" name="baud_rate" /></li>
+							<li>Data Bits: <input type="text" id="data_bits" name="data_bits" /></li>
+							<li>Stop Bits: <input type="text" id="stop_bits" name="stop_bits" /></li>
+							<li>Parity Bits: <input type="text" id="parity_bits" name="parity_bits" /></li>
+							<li>Delimeter: <input type="text" id="delimeter" name="delimeter" /></li>
+						</ul>
+					</div>
+					<div class="form_div" id="head_form">
+						
+					</div>
+					<div class="form_div" id="post_form">
+						<ul>
+							<li>Input: <input type="text" id="post_input" name="post_input" /></li>
+						</ul>
+					</div>
+					<div class="form_div" id="delete_form">
+						
+					</div>
+			</fieldset>
+		</div>
+		<div class="console">
+
 		</div>
 	</body>
 </html>
