@@ -17,7 +17,7 @@ module Martinelli
       dirname = File.dirname(__FILE__) + "/../../config/"
       Dir.foreach dirname do |basename|
         filename = dirname + basename
-        if File.file? filename then
+        if File.file? filename and filename.include? "json" then
           $log.debug("Opening " + filename)
           File.open(filename, "r") do |config_file|
             response_code, response_content = create_device(nil, config_file.read)
@@ -133,7 +133,7 @@ module Martinelli
         body = JSON(json_body)
         # should check for input field
         $log.debug "UPDATE:" + body["input"].dump + body["input"].length.to_s
-        @devices[name].putz body["input"]
+        #@devices[name].putz body["input"]
         
         response_code = 200
         response_content = body["input"]
@@ -142,7 +142,7 @@ module Martinelli
         response_content = "No such device"
       end
       
-      return response_code, response_content
+      return response_code, JSON.generate({"response" => response_content})
     end
     
 
