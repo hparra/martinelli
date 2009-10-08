@@ -74,7 +74,12 @@ module Martinelli
         response_code = 500 # Server Error
         response_content = err.message + err.backtrace.join("\n")
       end
-      return response_code, response_content      
+      
+      response_body = {
+        "response" => response_content
+      }.to_json
+      
+      return response_code, response_body 
     end
 
     # DELETE /devices/{device}
@@ -88,7 +93,12 @@ module Martinelli
         response_code = 404
         response_content = "No such device"
       end
-      return response_code, response_content
+      
+      response_body = {
+        "response" => response_content
+      }.to_json
+      
+      return response_code, response_body
     end
 
     # HEAD /devices/{device}
@@ -98,7 +108,10 @@ module Martinelli
 
     # GET /devices/{device}
     def read_device(name)
-      return 200, @devices[name].buffer
+      response_body = {
+        "response" => @devices[name].buffer
+      }.to_json
+      return 200, response_body
     end
     
     # POST /devices/{device}
@@ -142,13 +155,17 @@ module Martinelli
         response_content = "No such device"
       end
       
-      return response_code, JSON.generate({"response" => response_content})
+      response_body = {
+        "response" => response_content
+      }.to_json
+      
+      return response_code, response_body
     end
     
 
     def process(request, response)
       request, response = preprocess(request, response)
-      content_type = "text/plain" #"application/json"
+      content_type = "application/json" #"text/plain"
 
       query = Mongrel::HttpRequest.query_parse(request.params["QUERY_STRING"])
 
@@ -214,10 +231,14 @@ module Martinelli
         response_content = "No such device. May not be valid"
       end
       
+      response_body = {
+        "response" => response_content
+      }.to_json
+      
       if (@data_type == JSONP) then
         callback = @params['callback']
         content_type = "application/json"
-        response_content = "#{callback}(#{response_content})"
+        response_body = "#{callback}(#{response_body})"
       end
       
       # RESPONSE
