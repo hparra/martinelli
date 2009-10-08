@@ -4,7 +4,7 @@
 	"format": "HEX",
 	"delimiter": "FF",
 	"port": "\/dev\/tty.usbserial12",
-	"baud": 9600,
+	"baud_rate": 9600,
 	"stop_bits": 1,
-	"parity_bits": 0
+	"parity": 0
 }

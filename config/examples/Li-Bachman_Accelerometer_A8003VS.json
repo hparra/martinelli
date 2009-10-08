@@ -1,0 +1,14 @@
+{
+	"name": "accelerometer",
+	"delimiter": "\r\n",
+	"port": "/dev/tty.usbserial-A8003VSz",
+	"baud_rate": 2400,
+	"data_bits": 8,
+	"stop_bits": 1,
+	"parity": 0,
+	"make": "Li-Bachman",
+	"model": "HACK1",
+	"description": "A wireless accelerometer using XBee",
+	"details": {
+	}
+}

@@ -1,0 +1,14 @@
+{
+	"name": "scale",
+	"port": "\/dev\/tty.usbserial-A8003WbS",
+	"baud_rate": 2400,
+	"data_bits": 8,
+	"stop_bits": 1,
+	"parity": 0,
+	"delimiter": "\r\n",
+	"make": "Li-Bachman",
+	"model": "HACK2",
+	"description": "A wireless weight scale hack using pressure sensors and XBee",
+	"details": {
+	}
+}
