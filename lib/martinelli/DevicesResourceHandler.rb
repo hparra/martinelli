@@ -103,13 +103,17 @@ module Martinelli
 
     # HEAD /devices/{device}
     def read_device_metadata(name)
-      return 200, @devices[name].to_json
+      response_body = @devices[name].to_json
+      $log.debug(response_body)
+      return 200, response_body
     end
 
     # GET /devices/{device}
     def read_device(name)
+      response_content = @devices[name].buffer
+      $log.debug(response_content.inspect)
       response_body = {
-        "response" => @devices[name].buffer
+        "response" => response_content
       }.to_json
       return 200, response_body
     end
@@ -146,7 +150,7 @@ module Martinelli
         body = JSON(json_body)
         # should check for input field
         $log.debug "UPDATE:" + body["input"].dump + body["input"].length.to_s
-        #@devices[name].putz body["input"]
+        @devices[name].putz body["input"]
         
         response_code = 200
         response_content = body["input"]
@@ -190,50 +194,59 @@ module Martinelli
         if DevicesResourceHandler::route_devices_root? request_path then
           if @request_method == GET then
             response_code = 200
-            response_content = read_devices
+            response_body = read_devices
           else # != GET
             response_code = 405
             response_content = "/devices only supports GET"
+            response_body = {
+              "response" => response_content
+            }.to_json
           end
         else # route is valid and is not devices root
           device_name = DevicesResourceHandler::get_device_name(request_path)
           if device_exists?(device_name) then
-            response_code = 200
-            response_content = device_name + " exists!"
             
             case (@request_method)
             when GET
-              response_code, response_content = read_device(device_name)
+              response_code, response_body = read_device(device_name)
             when POST
-              response_code, response_content = update_device(device_name, body)
+              response_code, response_body = update_device(device_name, body)
             when DELETE
-              response_code, response_content = delete_device(device_name)
+              response_code, response_body = delete_device(device_name)
             when HEAD
-              response_code, response_content = read_device_metadata(device_name)
+              response_code, response_body = read_device_metadata(device_name)
             when PUT
               response_code = 405
               response_content = "Method not allowed"
+              response_body = {
+                "response" => response_content
+              }.to_json
             else
               response_code = 501
               response_content = "501: Not implemented"
+              response_body = {
+                "response" => response_content
+              }.to_json
             end
           else # device does not exist
             if @request_method == PUT then
-              response_code, response_content = create_device(device_name, body)
+              response_code, response_body = create_device(device_name, body)
             else
               response_code = 400
               response_content = "device does not exist"
+              response_body = {
+                "response" => response_content
+              }.to_json
             end
           end
         end
       else # !route_is_valid
         response_code = 404
         response_content = "No such device. May not be valid"
+        response_body = {
+          "response" => response_content
+        }.to_json
       end
-      
-      response_body = {
-        "response" => response_content
-      }.to_json
       
       if (@data_type == JSONP) then
         callback = @params['callback']
@@ -244,7 +257,7 @@ module Martinelli
       # RESPONSE
       response.start(response_code) do |head, out|
         head["Content-Type"] = content_type
-        out << response_content
+        out << response_body
       end
       
     end
