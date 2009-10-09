@@ -1,7 +1,5 @@
 
 require 'json'
-
-
 require 'martinelli/ResourceHandler'
 require 'martinelli/SerialDevice'
 
@@ -25,16 +23,17 @@ module Martinelli
           end
         end
       end
-      
     end
     
+    #
     # GET /devices
     def read_devices
       return @devices.to_json
     end
     
+    #
     # PUT /devices/{device}
-    def create_device(name, json_params) # Create => PUT
+    def create_device(name, json_params)
       begin
 
         params = JSON(json_params)
@@ -44,7 +43,7 @@ module Martinelli
         $log.debug("DevicesResourceHandler#create_device(" + name + ", " + json_params + ")")
         
         raise ArgumentError, "Resource name not specified", caller if name.nil?
-        #raise KeyError, "URI in use", caller if @devices.has_key?(name)
+        raise IndexError, "URI in use", caller if @devices.has_key?(name)
         raise ArgumentError, "Port not specified", caller if params["port"].nil?
         
         device = SerialDevice.new(json_params)
@@ -58,9 +57,9 @@ module Martinelli
       #rescue JSON::ParserError => err
       #  response_code = 400 # "Bad Request"
       #  response_content = 'Invalid JSON:' + err
-      #rescue KeyError => err
-      #  response_code = 409 # "Conflict"
-      #  response_content = 'URI is already in use ' + err
+      rescue IndexError => err
+       response_code = 409 # "Conflict"
+       response_content = 'URI is already in use ' + err
       rescue ArgumentError => err
         response_code = 400 # "Bad Request"
         response_content = 'Bad parameters: ' + err
@@ -70,7 +69,7 @@ module Martinelli
       rescue Errno::EBUSY => err
         response_code = 409 # "Conflict"
         response_content = 'Port is already in use: ' + err
-      rescue Exception => err # Unknown
+      rescue Exception => err
         response_code = 500 # Server Error
         response_content = err.message + err.backtrace.join("\n")
       end
@@ -82,6 +81,7 @@ module Martinelli
       return response_code, response_body 
     end
 
+    #
     # DELETE /devices/{device}
     def delete_device(name)
       if @devices.has_key? name then
@@ -93,62 +93,52 @@ module Martinelli
         response_code = 404
         response_content = "No such device"
       end
-      
       response_body = {
         "response" => response_content
       }.to_json
-      
       return response_code, response_body
     end
 
+    #
     # HEAD /devices/{device}
     def read_device_metadata(name)
-      response_body = @devices[name].to_json
-      $log.debug(response_body)
-      return 200, response_body
-    end
-
-    # GET /devices/{device}
-    def read_device(name)
-      response_content = @devices[name].buffer
-      $log.debug(response_content.inspect)
+      if @devices.has_key? name then
+        response_content = @devices[name]
+        response_code = 200
+      else
+        response_code = 404
+        response_content = "No such device"
+      end      
       response_body = {
         "response" => response_content
       }.to_json
-      return 200, response_body
+      $log.debug(response_body)
+      return response_code, response_body
     end
-    
+
+    #
+    # GET /devices/{device}
+    def read_device(name)
+      if @devices.has_key? name then
+        response_content = @devices[name].buffer
+        $log.debug(response_content.inspect)
+        response_code = 200
+      else
+        response_code = 404
+        response_content = "No such device"
+      end      
+      response_body = {
+        "response" => response_content
+      }.to_json
+      return response_code, response_body
+    end
+
+    #
     # POST /devices/{device}
     def update_device(name, json_body)
-      # if (@body != nil && @body != "") then
-      # 
-      #   # TODO
-      #   # parse body (JSON)
-      #   # check body.data_type
-      #   # if HEX, validate, and hexify
-      #   # if alphanumeric ASCII, validate
-      # 
-      #   @parsed_json = JSON.parse(@body)
-      #   if(@parsed_json.data_type.to_s.upcase == "HEX")
-      #       response_content = "200 OK"
-      #       if(hexify(@parsed_json.data) != "")
-      #         device.write(hexify(@parsed_json.data))
-      #       end
-      #   elsif(@parsed_json.data_type.to_s.upcase == "ASCII")
-      #     puts @parsed_json.device_type.to_s
-      #     puts "json data is : "
-      #     puts @parsed_json.data
-      #       response_content = "LISTEN: 200 OK"
-      #       if(asciify(@parsed_json.data) != "")
-      #          device.write(@parsed_json.data)
-      #       end
-      #   end
-      # 
-      # end
       if @devices.has_key? name then
         
-        body = JSON(json_body)
-        # should check for input field
+        body = JSON(json_body) # TODO: should check for request field
         $log.debug "UPDATE:" + body["input"].dump + body["input"].length.to_s
         @devices[name].putz body["input"]
         
@@ -165,12 +155,13 @@ module Martinelli
       
       return response_code, response_body
     end
-    
-
+  
+    #
+    #
     def process(request, response)
       request, response = preprocess(request, response)
-      content_type = "application/json" #"text/plain"
-
+      
+      content_type = "application/json"
       query = Mongrel::HttpRequest.query_parse(request.params["QUERY_STRING"])
 
       # request method
@@ -179,12 +170,12 @@ module Martinelli
         @request_method = query["method"]
       end
       
+      # request body
       if query["body"] != nil then
         body = query["body"]
       else
         body = request.body.string
       end
-
       $log.debug("method=" + @request_method)
       $log.debug("body=" + body)
 
@@ -192,65 +183,56 @@ module Martinelli
       request_path = request.params["REQUEST_PATH"]
       if DevicesResourceHandler::route_valid? request_path then
         if DevicesResourceHandler::route_devices_root? request_path then
-          if @request_method == GET then
+          case @request_method
+          when GET
             response_code = 200
             response_body = read_devices
-          else # != GET
+          when PUT, POST, DELETE, HEAD
             response_code = 405
             response_content = "/devices only supports GET"
+            response_body = {
+              "response" => response_content    
+            }.to_json
+          else
+            response_code = 501
+            response_content = "501: Not implemented"
             response_body = {
               "response" => response_content
             }.to_json
           end
         else # route is valid and is not devices root
           device_name = DevicesResourceHandler::get_device_name(request_path)
-          if device_exists?(device_name) then
-            
-            case (@request_method)
-            when GET
-              response_code, response_body = read_device(device_name)
-            when POST
-              response_code, response_body = update_device(device_name, body)
-            when DELETE
-              response_code, response_body = delete_device(device_name)
-            when HEAD
-              response_code, response_body = read_device_metadata(device_name)
-            when PUT
-              response_code = 405
-              response_content = "Method not allowed"
-              response_body = {
-                "response" => response_content
-              }.to_json
-            else
-              response_code = 501
-              response_content = "501: Not implemented"
-              response_body = {
-                "response" => response_content
-              }.to_json
-            end
-          else # device does not exist
-            if @request_method == PUT then
-              response_code, response_body = create_device(device_name, body)
-            else
-              response_code = 400
-              response_content = "device does not exist"
-              response_body = {
-                "response" => response_content
-              }.to_json
-            end
+          case @request_method
+          when PUT
+            response_code, response_body = create_device(device_name, body)
+          when GET
+            response_code, response_body = read_device(device_name)
+          when POST
+            response_code, response_body = update_device(device_name, body)
+          when DELETE
+            response_code, response_body = delete_device(device_name)
+          when HEAD
+            response_code, response_body = read_device_metadata(device_name)
+          else
+            response_code = 501
+            response_content = "501: Not implemented"
+            response_body = {
+              "response" => response_content
+            }.to_json
           end
         end
-      else # !route_is_valid
+      else # route is invalid
         response_code = 404
-        response_content = "No such device. May not be valid"
+        response_content = "No such device. Route may not be valid"
         response_body = {
           "response" => response_content
         }.to_json
       end
       
+      # JSONP
       if (@data_type == JSONP) then
         callback = @params['callback']
-        content_type = "application/json"
+        content_type = "application/javascript"
         response_body = "#{callback}(#{response_body})"
       end
       
