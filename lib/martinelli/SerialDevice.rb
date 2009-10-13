@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'serialport' # git://github.com/hparra/ruby-serialport.git
+require 'json'
 
 module Martinelli
 
@@ -132,38 +133,6 @@ module Martinelli
         #$log.debug("Wrote: " + ch.chr)
       end
     end
-    
-    # LAME!
-    def slow_write(s, delay = 0.01)
-      for i in 0..s.length-1
-        ch = s[i..i]
-        @serial_port.putc(ch)
-        $log.debug("Wrote: " + ch)
-        sleep(delay)
-      end
-    end
-
-    # hackery please fix me
-    #
-    def get(params)
-      value = ""
-      begin
-        command = "g" + @wid
-        Timeout::timeout(0.2) do
-          @log.debug("Attempting slow_puts: " + command)
-          slow_puts(command)
-          response = @serial_port.gets("\n")
-          @log.debug("Got: " + response)
-          value = response[4..-2].chomp
-        end
-      rescue Timeout::Error
-        value # returns last value
-      end
-
-      return value
-    end
-
-
 
     def to_json
       return @params.to_json
