@@ -30,7 +30,7 @@ module Martinelli
     # Returns list of devices as JSON
     # Analogous GET /devices
     def read_devices
-      return @devices.to_json
+      return 200, @devices.to_json
     end
     
     # Creates a device by opening a serial port connection
@@ -189,8 +189,10 @@ module Martinelli
       @request_method = request.params[Mongrel::Const::REQUEST_METHOD]
       request_path = request.params["REQUEST_PATH"]
       http_host = request.params["HTTP_HOST"]
-      query_string = request.params["QUERY_STRING"] || ""
-      $log.debug("REQUEST => " + @request_method + " http://" + http_host + request_path + " " + query_string)
+      query_string = request.params["QUERY_STRING"]
+      request_string = "http://" + http_host + request_path
+      request_string += ("?" + query_string) if query_string
+      $log.debug("REQUEST => " + @request_method + " " + request_string)
       
       query = Mongrel::HttpRequest.query_parse(query_string)
 
@@ -211,8 +213,7 @@ module Martinelli
         if DevicesResourceHandler::route_devices_root? request_path then
           case @request_method
           when GET
-            response_code = 200
-            response_body = read_devices
+            response_code, response_body = read_devices
           when PUT, POST, DELETE, HEAD
             response_code = 405
             response_content = "/devices only supports GET"
@@ -257,12 +258,13 @@ module Martinelli
       
       content_type = "application/json"
       
-      if (query['format'] == JSONP) then # JSONP
+      if (query['callback']) then # JSONP
         callback = query['callback']
         content_type = "application/javascript"
         response_body = "#{callback}(#{response_body})"
       end
       
+      $log.debug("RESPONSE => " + response_code.to_s + " " + response_body)
       response.start(response_code) do |head, out| # RESPONSE
         head["Content-Type"] = content_type
         out << response_body
