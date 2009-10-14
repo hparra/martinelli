@@ -12,7 +12,7 @@ module Martinelli
 
   # format constants
   XML = "xml".freeze
-  JSON = "json".freeze
+  #JSON = "json".freeze
   JSONP = "jsonp".freeze
   CSV = "csv".freeze
   XHTML = "xhtml".freeze

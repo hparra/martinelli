@@ -20,7 +20,7 @@ module Martinelli
           $log.debug("Opening " + filename)
           File.open(filename, "r") do |config_file|
             response_code, response_content = create_device(nil, config_file.read)
-            $log.debug("(" + response_code.to_s + ") " + response_content)
+            $log.debug("CONFIG => " + response_code.to_s + " " + response_content)
           end
         end
       end
@@ -61,9 +61,9 @@ module Martinelli
         response_code = 201 # "Created"
         response_content = '/devices/' + name + ' created'
         #head["Location"] = absoluteURI
-      #rescue JSON::ParserError => err
-      #  response_code = 400 # "Bad Request"
-      #  response_content = 'Invalid JSON:' + err
+      rescue JSON::ParserError => err
+        response_code = 400 # "Bad Request"
+        response_content = 'Invalid JSON:' + err
       rescue IndexError => err
        response_code = 409 # "Conflict"
        response_content = 'URI is already in use ' + err
@@ -78,7 +78,8 @@ module Martinelli
         response_content = 'Port is already in use: ' + err
       rescue Exception => err
         response_code = 500 # Server Error
-        response_content = err.message + err.backtrace.join("\n")
+        response_content = err.class.name + "#" + err.message
+        $log.error(err.backtrace.join("\n"))
       end
       
       response_body = {
