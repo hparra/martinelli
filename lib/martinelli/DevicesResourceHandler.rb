@@ -4,14 +4,15 @@ require 'martinelli/ResourceHandler'
 require 'martinelli/SerialDevice'
 
 module Martinelli
-  class DevicesResourceHandler < ResourceHandler
+  
+  # Custom Mongrel HTTP Handler for serial port device communication
+  class DevicesResourceHandler < Mongrel::HttpHandler
 
+    # Initializes DevicesResourceHandler
+    # Creates devices Hash Table
+    # Reads JSON files in MARTINELLI/config and calls create_device() for each
     def initialize
-      #puts "__FILE__: " + File.dirname(__FILE__)
-
-      @devices = Hash.new # should probably use another structure
-      
-      # load config files
+      @devices = Hash.new      
       dirname = File.dirname(__FILE__) + "/../../config/"
       Dir.foreach dirname do |basename|
         filename = dirname + basename
@@ -25,14 +26,20 @@ module Martinelli
       end
     end
     
-    #
-    # GET /devices
+    # Reads devices hash table
+    # Returns list of devices as JSON
+    # Analogous GET /devices
     def read_devices
       return @devices.to_json
     end
     
-    #
-    # PUT /devices/{device}
+    # Creates a device by opening a serial port connection
+    # Returns HTTP Response Code as Integer and Response as JSON
+    # * 201 if SerialDevice initialized
+    # * 409 if SerialDevice port or URI is already in use
+    # * 400 if SerialDevice parameters are bad due to unexistant port, malformed JSON, etc.
+    # * 500 if an unknown error occured
+    # Analogous to PUT /devices/{device}
     def create_device(name, json_params)
       begin
 
@@ -81,8 +88,11 @@ module Martinelli
       return response_code, response_body 
     end
 
-    #
-    # DELETE /devices/{device}
+    # Deletes a device by closing a serial port connection
+    # Returns HTTP Response Code as Integer and Response as JSON
+    # * 200 if SerialDevice is closed
+    # * 404 if SerialDevice does not exist
+    # Analogous to DELETE /devices/{device}
     def delete_device(name)
       if @devices.has_key? name then
         @devices[name].close
@@ -99,8 +109,12 @@ module Martinelli
       return response_code, response_body
     end
 
-    #
-    # HEAD /devices/{device}
+    # Reads a device's metadata
+    # See SerialDevice
+    # Returns HTTP Response Code as Integer and Response as JSON
+    # * 200 if SerialDevice is found
+    # * 404 if SerialDevice does not exist
+    # Analogous to HEAD /devices/{device}
     def read_device_metadata(name)
       if @devices.has_key? name then
         response_content = @devices[name]
@@ -115,9 +129,12 @@ module Martinelli
       $log.debug(response_body)
       return response_code, response_body
     end
-
-    #
-    # GET /devices/{device}
+    
+    # Reads device data
+    # Returns HTTP Response Code as Integer and Response as JSON
+    # * 200 if SerialDevice is found
+    # * 404 if SerialDevice does not exist
+    # Analogous to GET /devices/{device}
     def read_device(name)
       if @devices.has_key? name then
         response_content = @devices[name].buffer
@@ -133,8 +150,12 @@ module Martinelli
       return response_code, response_body
     end
 
-    #
-    # POST /devices/{device}
+    # Writes data to a device
+    # See SerialDevice
+    # Returns HTTP Response Code as Integer and Response as JSON
+    # * 200 if SerialDevice is found
+    # * 404 if SerialDevice does not exist
+    # Analogous to POST /devices/{device}
     def update_device(name, json_body)
       if @devices.has_key? name then
         
@@ -156,31 +177,36 @@ module Martinelli
       return response_code, response_body
     end
   
-    #
-    #
+    # Accepts valid HTTP 1.1 request, processes request, and sends out response
+    # Only processes the following routes:
+    # * HOST/devices
+    # * HOST/devices/{device_name}
+    # Supports overloaded GET and POST through 'method=' query
+    # Supports JSONP through 'format=JSONP&callback=' query
+    # Mongrel calls this method directly
     def process(request, response)
-      request, response = preprocess(request, response)
+      #request, response = preprocess(request, response)
+      @request_method = request.params[Mongrel::Const::REQUEST_METHOD]
+      request_path = request.params["REQUEST_PATH"]
+      http_host = request.params["HTTP_HOST"]
+      query_string = request.params["QUERY_STRING"] || ""
+      $log.debug("REQUEST => " + @request_method + " http://" + http_host + request_path + " " + query_string)
       
-      content_type = "application/json"
-      query = Mongrel::HttpRequest.query_parse(request.params["QUERY_STRING"])
+      query = Mongrel::HttpRequest.query_parse(query_string)
 
-      # request method
-      @request_method = request.params[Mongrel::Const::REQUEST_METHOD] || GET
-      if @request_method == GET && query["method"] != nil then
+      # overloaded request_method
+      if (@request_method == GET || @request_method == POST) && query["method"] != nil then
         @request_method = query["method"]
       end
       
-      # request body
+      # overloaded request_body
       if query["body"] != nil then
         body = query["body"]
       else
         body = request.body.string
       end
-      $log.debug("method=" + @request_method)
-      $log.debug("body=" + body)
 
       # messy routing
-      request_path = request.params["REQUEST_PATH"]
       if DevicesResourceHandler::route_valid? request_path then
         if DevicesResourceHandler::route_devices_root? request_path then
           case @request_method
@@ -229,27 +255,27 @@ module Martinelli
         }.to_json
       end
       
-      # JSONP
-      if (@data_type == JSONP) then
-        callback = @params['callback']
+      content_type = "application/json"
+      
+      if (query['format'] == JSONP) then # JSONP
+        callback = query['callback']
         content_type = "application/javascript"
         response_body = "#{callback}(#{response_body})"
       end
       
-      # RESPONSE
-      response.start(response_code) do |head, out|
+      response.start(response_code) do |head, out| # RESPONSE
         head["Content-Type"] = content_type
         out << response_body
       end
-      
     end
 
+    #
+    #
     def device_exists?(name)
       return @devices.has_key?(name)
     end
 
-    # RE: Following static funtions
-    # I like what they abstract, but hate their implementation
+    # RE: Following static funtions, I like what they abstract, but hate their implementation
     
     def self.get_device_name(request_path)
       a = request_path.split("/") # should probably use heavy regex instead
@@ -260,7 +286,6 @@ module Martinelli
     def self.route_valid?(request_path)
       a = request_path.split("/") # should probably use heavy regex instead
       a[0] = "/" # split will always return at least empty string due to "/"
-      $log.debug(a)
       return a.last == "devices" || a.at(-2) == "devices"
     end
     
