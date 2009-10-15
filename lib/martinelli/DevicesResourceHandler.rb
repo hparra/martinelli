@@ -138,7 +138,7 @@ module Martinelli
     # Analogous to GET /devices/{device}
     def read_device(name)
       if @devices.has_key? name then
-        response_content = @devices[name].buffer
+        response_content = string_metaencode(@devices[name].buffer, devices[name].params["format"])
         $log.debug(response_content.inspect)
         response_code = 200
       else
@@ -152,6 +152,7 @@ module Martinelli
     end
 
     # Writes data to a device
+    # Metadecodes ASCII representation to format device understands
     # See SerialDevice
     # Returns HTTP Response Code as Integer and Response as JSON
     # * 200 if SerialDevice is found
@@ -159,10 +160,13 @@ module Martinelli
     # Analogous to POST /devices/{device}
     def update_device(name, json_body)
       if @devices.has_key? name then
-        
+          
         body = JSON(json_body) # TODO: should check for request field
         $log.debug "UPDATE:" + body["input"].dump + body["input"].length.to_s
-        @devices[name].putz body["input"]
+        
+        input = string_metadecode(body["input"], devices[name].params["format"])
+        
+        @devices[name].putz input
         
         response_code = 200
         response_content = body["input"]
@@ -186,7 +190,6 @@ module Martinelli
     # Supports JSONP through 'format=JSONP&callback=' query
     # Mongrel calls this method directly
     def process(request, response)
-      #request, response = preprocess(request, response)
       @request_method = request.params[Mongrel::Const::REQUEST_METHOD]
       request_path = request.params["REQUEST_PATH"]
       http_host = request.params["HTTP_HOST"]
@@ -270,6 +273,52 @@ module Martinelli
         head["Content-Type"] = content_type
         out << response_body
       end
+    end
+    
+    # Takes an ASCII string with a metaencoding and converts symbols into byte literals
+    # Returns 8-bit ASCII string
+    def string_metadecode(text, metaencoding)
+      case metaencoding
+      when "ASCII"
+        decoded_string = text
+      when "HEX" # Ex: 50 34 1A FF
+        decoded_string = ""
+        tmp = text.strip
+        tmp.scan(/../) do |couple|
+          decoded_string += couple.hex.chr
+        end
+      when "BIN"
+        decoded_string = ""
+        tmp = text.strip
+        tmp.scan(/......../) do |byte|
+          decoded_string += byte.to_i(2).chr
+        end
+      else
+        raise RuntimeError
+      end
+      $log.debug("Metadecode: " + text.inspect + " => " + decoded_string.inspect)
+      return decoded_string
+    end
+
+    # Takes an ASCII string and converts each character into a string representing the desired metaencode
+    # Examples
+    # * HEX: "F" => "46"
+    # * OCT: "F" => "106"
+    # * BIN: "F" => "001000110"
+    # Returns 8-bit ASCII string
+    def string_metaencode(text, metaencoding)
+      case metaencoding
+      when "ASCII"
+        encoded_string = text
+      when "HEX"
+        encoded_string = text.unpack("H*").pop
+      when "BIN"
+        encoded_string = text.unpack("B*").pop
+      else
+        raise RuntimeError
+      end
+      $log.debug("Metaencode: " + text.inspect + " => " + encoded_string.inspect)
+      return encoded_string
     end
 
     #

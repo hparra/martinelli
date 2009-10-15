@@ -10,6 +10,7 @@ module Martinelli
   
     attr_reader :buffer
     attr_reader :listener
+    attr_reader :params
   
     # {
     #   "port": {String}
