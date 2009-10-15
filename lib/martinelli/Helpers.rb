@@ -1,4 +1,23 @@
 module Martinelli
+  
+  # http 1.1 constants
+  HEAD = "HEAD".freeze
+  GET = "GET".freeze
+  PUT = "PUT".freeze
+  POST = "POST".freeze
+  DELETE = "DELETE".freeze
+  OPTIONS = "OPTIONS".freeze
+  TRACE = "TRACE".freeze
+  CONNECT = "CONNECT".freeze
+
+  # format constants
+  XML = "xml".freeze
+  #JSON = "json".freeze
+  JSONP = "jsonp".freeze
+  CSV = "csv".freeze
+  XHTML = "xhtml".freeze
+  TEXT = "text".freeze
+  
   def hexify(s)
     h = ""
     s = s.chop()
