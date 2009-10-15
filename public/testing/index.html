@@ -138,6 +138,7 @@
 				// },
 				xDevice: function() {
 					device_name = $("#device_name").val();
+					jsonp = document.getElementById('JSONP');
 					
 					if (currentForm == 'put') {
 						// TODO: is there a better way to do this?
@@ -168,21 +169,38 @@
 						data_string = "";
 					}
 					
-					$.ajax({
-						type: currentForm,
-						url: "/devices/" + device_name,
-						contentType: "application/json; charset=UTF-8",
-						data: data_string,
-						complete: function (xhr, status) {
-							if (xhr.status === 201) { // "Created"
-								console.debug("Response: " + xhr.responseText);
-							} else if (xhr.status === 200) { // "OK"
-								console.debug("Response: " + xhr.responseText);
-							} else {
-								console.debug("Error");
-							}
+					if(jsonp.checked) {
+						method = currentForm.toUpperCase();
+						input = $('#device_name').attr("value");
+						encodeURIComponent(data_string);
+						if (data_string === "") {
+							$.getJSON(input + "?method=" + method + "&callback=?",
+								function() {
+
+							});
+						} else {
+							$.getJSON(input + "?method=" + method + "&body=" + data_string + "&callback=?",
+								function() {
+								
+							});
 						}
-					});
+					} else {
+						$.ajax({
+							type: currentForm,
+							url: "/devices/" + device_name,
+							contentType: "application/json; charset=UTF-8",
+							data: data_string,
+							complete: function (xhr, status) {
+								if (xhr.status === 201) { // "Created"
+									console.debug("Response: " + xhr.responseText);
+								} else if (xhr.status === 200) { // "OK"
+									console.debug("Response: " + xhr.responseText);
+								} else {
+									console.debug("Error");
+								}
+							}
+						});
+					}					
 				}
 			};
 			
@@ -203,10 +221,7 @@
 				if(jsonp.checked) {
 					method = currentForm.toUpperCase();
 					input = $('#device_name').attr("value");
-					switchForm('get');
 					$('#device_name').attr("value", input + "?method=" + method + "&callback=?");
-				} else {
-					console.log('nope');
 				}
 			}
 			
@@ -272,7 +287,7 @@
 						
 					</div>
 					<div id="jsonp_option">
-						JSONP: <input type="checkbox" id="JSONP" name="JSONP" onclick="jsonCheck()"/>
+						JSONP: <input type="checkbox" id="JSONP" name="JSONP" />
 					</div>
 			</fieldset>
 		</div>
