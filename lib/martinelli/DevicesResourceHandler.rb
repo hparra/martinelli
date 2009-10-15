@@ -138,8 +138,7 @@ module Martinelli
     # Analogous to GET /devices/{device}
     def read_device(name)
       if @devices.has_key? name then
-        response_content = string_metaencode(@devices[name].buffer, devices[name].params["format"])
-        $log.debug(response_content.inspect)
+        response_content = string_metaencode(@devices[name].buffer, @devices[name].params["format"])
         response_code = 200
       else
         response_code = 404
@@ -164,7 +163,7 @@ module Martinelli
         body = JSON(json_body) # TODO: should check for request field
         $log.debug "UPDATE:" + body["input"].dump + body["input"].length.to_s
         
-        input = string_metadecode(body["input"], devices[name].params["format"])
+        input = string_metadecode(body["input"], @devices[name].params["format"])
         
         @devices[name].putz input
         
