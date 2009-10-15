@@ -195,7 +195,22 @@
 				$('#' + previousForm + '_form').hide();
 				$('#' + currentForm + '_form').fadeIn(); 
 			}
-		</script>
+			
+			// JSONP
+
+			function jsonCheck() {
+				jsonp = document.getElementById('JSONP');
+				if(jsonp.checked) {
+					method = currentForm.toUpperCase();
+					input = $('#device_name').attr("value");
+					switchForm('get');
+					$('#device_name').attr("value", input + "?method=" + method + "&callback=?");
+				} else {
+					console.log('nope');
+				}
+			}
+			
+			</script>
 	</head>
 	<body>
 		<div class="section">
@@ -255,6 +270,9 @@
 					</div>
 					<div class="form_div" id="delete_form">
 						
+					</div>
+					<div id="jsonp_option">
+						JSONP: <input type="checkbox" id="JSONP" name="JSONP" onclick="jsonCheck()"/>
 					</div>
 			</fieldset>
 		</div>
