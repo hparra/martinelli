@@ -23,16 +23,40 @@
 			
 			.console {
 				position: absolute;
-				width: 50%;
+				width: 48%;
 				height: 100%;
 				left: 50%;
 				top: 0px;
+				padding-left: 1%;
+				padding-right: 1%;
+				font-family: arial;
+				font-weight: bold;
+				color: white;
 				background-color: black;
+				overflow: scroll;
 			}
 			
 			fieldset {
 				border: 1px solid black;
 				background-color: #c0c0c0;
+			}
+			
+			.consoleMessage0 {
+				font-family: arial;
+				font-weight: bold;
+				color: #00FF00;
+				background: #101010;
+				width: 96%;
+				padding: 2%;
+			}
+			.consoleMessage1 {
+				font-family: arial;
+				font-weight: bold;
+				color: #00FF00;
+				background: #010101;
+				opacity: 1;
+				width: 96%;
+				padding: 2%;
 			}
 		</style>
 		<script src="jquery-1.3.2.js"></script>
@@ -40,15 +64,15 @@
 		<script type="text/javascript">
 			Martinelli = {
 				getDevices: function() { // GET /devices
-					console.debug("Request: GET /devices")
+					consoleOutput("Request: GET /devices")
 					$.ajax({
 						type: "GET",
 						url: "/devices",
 						complete: function (xhr, status) {
 							if (xhr.status === 200) // "OK"
-								console.debug("Response: " + xhr.responseText);
+								consoleOutput("Response: " + xhr.responseText);
 							else
-								console.debug("Error");
+								consoleOutput("Error");
 						}
 					});
 				},
@@ -73,7 +97,7 @@
 				// 	};
 				// 	put_data_string = $.toJSON(put_data);
 				// 	
-				// 	console.debug("Request: PUT /device/" + device_name + "\r\n" + put_data_string);
+				// 	consoleOutput("Request: PUT /device/" + device_name + "\r\n" + put_data_string);
 				// 	
 				// 	
 				// 	$.ajax({
@@ -83,9 +107,9 @@
 				// 		data: put_data_string,
 				// 		complete: function (xhr, status) {
 				// 			if (xhr.status === 201) // "Created"
-				// 				console.debug("Response: " + xhr.responseText);
+				// 				consoleOutput("Response: " + xhr.responseText);
 				// 			else
-				// 				console.debug("Error");
+				// 				consoleOutput("Error");
 				// 		}
 				// 	});
 				// 	
@@ -101,9 +125,9 @@
 				// 		data: post_data_string,
 				// 		complete: function (xhr, status) {
 				// 			if (xhr.status === 201) // "Created"
-				// 				console.debug("Response: " + xhr.responseText);
+				// 				consoleOutput("Response: " + xhr.responseText);
 				// 			else
-				// 				console.debug("Error");
+				// 				consoleOutput("Error");
 				// 		}
 				// 	});
 				// 	
@@ -116,9 +140,9 @@
 				// 		url: "/devices/" + device_name,
 				// 		complete: function (xhr, status) {
 				// 			if (xhr.status === 200) // "OK"
-				// 				console.debug("Response: " + xhr.responseText);
+				// 				consoleOutput("Response: " + xhr.responseText);
 				// 			else
-				// 				console.debug("Error");
+				// 				consoleOutput("Error");
 				// 		}
 				// 	});
 				// },
@@ -130,15 +154,22 @@
 				// 		url: "/devices/" + device_name,
 				// 		complete: function (xhr, status) {
 				// 			if (xhr.status === 200) // "OK"
-				// 				console.debug("Response: " + xhr.responseText);
+				// 				consoleOutput("Response: " + xhr.responseText);
 				// 			else
-				// 				console.debug("Error");
+				// 				consoleOutput("Error");
 				// 		}
 				// 	});
 				// },
 				xDevice: function() {
 					device_name = $("#device_name").val();
 					jsonp = document.getElementById('JSONP');
+					serverLocation = "/";
+				
+					if (document.getElementById("remote_server").checked) {
+						serverLocation = "http://" + $('#server_location').val() + "/";
+					} else if (document.getElementById("local_server").checked){
+						serverLocation = "/";
+					}
 					
 					if (currentForm == 'put') {
 						// TODO: is there a better way to do this?
@@ -156,7 +187,7 @@
 							"delimiter": delimiter
 						};
 						data_string = $.toJSON(put_data);
-						console.debug("Request: PUT /device/" + device_name + "\r\n" + data_string);
+						consoleOutput("Request: PUT /device/" + device_name + "\r\n" + data_string);
 					} else if (currentForm == 'post') {
 						post_input = $("#post_input").val().toString()
 						post_input = post_input.replace(/\\n/, "\n")
@@ -174,29 +205,29 @@
 						input = $('#device_name').attr("value");
 						encodeURIComponent(data_string);
 						if (data_string === "") {
-							$.getJSON(input + "?method=" + method + "&callback=?",
-								function() {
-
+							$.getJSON(serverLocation + "devices/" + input + "?method=" + method + "&callback=?",
+								function(data) {
+									consoleOutput("Response: " + $.toJSON(data));
 							});
 						} else {
-							$.getJSON(input + "?method=" + method + "&body=" + data_string + "&callback=?",
-								function() {
-								
+							$.getJSON(serverLocation + "devices/" + input + "?method=" + method + "&body=" + data_string + "&callback=?",
+								function(data) {
+									consoleOutput("Response: " + $.toJSON(data));
 							});
 						}
 					} else {
 						$.ajax({
 							type: currentForm,
-							url: "/devices/" + device_name,
+							url: serverLocation + "devices/" + device_name,
 							contentType: "application/json; charset=UTF-8",
 							data: data_string,
 							complete: function (xhr, status) {
 								if (xhr.status === 201) { // "Created"
-									console.debug("Response: " + xhr.responseText);
+									consoleOutput("Response: " + xhr.responseText);
 								} else if (xhr.status === 200) { // "OK"
-									console.debug("Response: " + xhr.responseText);
+									consoleOutput("Response: " + xhr.responseText);
 								} else {
-									console.debug("Error");
+									consoleOutput("Error");
 								}
 							}
 						});
@@ -214,17 +245,22 @@
 				$('#' + currentForm + '_form').fadeIn(); 
 			}
 			
-			// JSONP
-
-			function jsonCheck() {
-				jsonp = document.getElementById('JSONP');
-				if(jsonp.checked) {
-					method = currentForm.toUpperCase();
-					input = $('#device_name').attr("value");
-					$('#device_name').attr("value", input + "?method=" + method + "&callback=?");
-				}
-			}
+			// Console
+			var messageNum = 0;
 			
+			function consoleOutput(message) {
+				console.debug(message);
+				consoleMessage = document.createElement("div");
+				consoleMessage.innerHTML = message;
+				consoleMessage.setAttribute("id", "message" + messageNum);
+				if (messageNum%2 === 0) {
+					consoleMessage.setAttribute("class", "consoleMessage0");
+				} else {
+					consoleMessage.setAttribute("class", "consoleMessage1");
+				}
+				$(".console").append(consoleMessage);
+				messageNum = messageNum + 1;
+			}
 			</script>
 	</head>
 	<body>
@@ -249,9 +285,20 @@
 			</ul> -->
 			
 			<fieldset>
+				<legend>Select server:</legend>
+				<form id="server_select">
+					<input type="radio" id="local_server" name="server" value="local" /> Local
+					<input type="radio" id="remote_server" name="server" value="remote" /> http://<input type="text" id="server_location" name="server_location">
+				</form>
+			</fieldset>
+			<fieldset>
 				<legend>/devices</legend>
 					<input type="button" onclick="Martinelli.getDevices()" value="GET /devices" />
-					<br /><br />				
+					<br /><br />
+					<div id="jsonp_option">
+						Use JSONP? <input type="checkbox" id="JSONP" name="JSONP" />
+					</div>
+					<br />
 					<select>
 						<option onclick="switchForm('get')">GET</option>
 						<option onclick="switchForm('put')">PUT</option>
@@ -286,13 +333,10 @@
 					<div class="form_div" id="delete_form">
 						
 					</div>
-					<div id="jsonp_option">
-						JSONP: <input type="checkbox" id="JSONP" name="JSONP" />
-					</div>
 			</fieldset>
 		</div>
 		<div class="console">
-
+			<h1>CONSOLE:</h1>
 		</div>
 	</body>
 </html>
