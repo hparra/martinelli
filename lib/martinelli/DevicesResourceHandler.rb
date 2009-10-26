@@ -55,8 +55,11 @@ module Martinelli
         
         device = SerialDevice.new(json_params)
         device.open
-        device.listen # returns thread? or should device keep it?
-        @devices[name] = device
+		
+		# FIXME: Blocks under Win32/Ruby1.8. Don't know why
+        #device.listen # returns thread? or should device keep it?
+        
+		@devices[name] = device
         
         response_code = 201 # "Created"
         response_content = '/devices/' + name + ' created'

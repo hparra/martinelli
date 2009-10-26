@@ -1,0 +1,15 @@
+{
+	"name": "videoswitch",
+	"mute?": true,
+	"format": "HEX",
+	"length": 4,
+	"port": "\/dev\/tty.usbserial4",
+	"baud_rate": 9600,
+	"stop_bits": 1,
+	"parity": 0,
+	"make": "Kramer",
+	"model": "VS-201YC",
+	"description": "A two-port S-Video switch",
+	"details": {
+	}
+}
