@@ -1,0 +1,12 @@
+{
+	"make": "Sony",
+	"model": "EVI-D70",
+	"description": "A VISCA Pan-Tilt-Zoom Color Video Camera (NTSC)",
+	"port": "\/dev\/tty.usbserial12",
+	"name": "ptzcamera",
+	"format": "HEX",
+	"delimiter": "FF",
+	"baud_rate": 9600,
+	"stop_bits": 1,
+	"parity": 0
+}
