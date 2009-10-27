@@ -285,13 +285,13 @@ module Martinelli
         decoded_string = text
       when "HEX" # Ex: 50 34 1A FF
         decoded_string = ""
-        tmp = text.strip
+        tmp = text.tr(" \r\n\t", '') # TODO: Build custom non-HEX stripper
         tmp.scan(/../) do |couple|
           decoded_string += couple.hex.chr
         end
       when "BIN"
         decoded_string = ""
-        tmp = text.strip
+        tmp = text.tr(" \r\n\t", '')
         tmp.scan(/......../) do |byte|
           decoded_string += byte.to_i(2).chr
         end
