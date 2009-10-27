@@ -7,9 +7,7 @@ require 'logger'
 require 'json'
 
 require 'martinelli/SerialDevice'
-require 'martinelli/ResourceHandler'
 require 'martinelli/DevicesResourceHandler'
-require 'martinelli/SerialDeviceHandler'
 require 'martinelli/Helpers'
 
 module Martinelli

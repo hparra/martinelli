@@ -1,6 +1,5 @@
 
 require 'json'
-require 'martinelli/ResourceHandler'
 require 'martinelli/SerialDevice'
 
 module Martinelli
