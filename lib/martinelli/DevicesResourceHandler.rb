@@ -55,10 +55,12 @@ module Martinelli
         device = SerialDevice.new(json_params)
         device.open
 		
-		# FIXME: Blocks under Win32/Ruby1.8. Don't know why
-        #device.listen # returns thread? or should device keep it?
+		    # FIXME: Blocks under Win32/Ruby1.8. Don't know why
+        unless device.params['mute?'] then
+          device.listen # returns thread? or should device keep it?
+        end
         
-		@devices[name] = device
+        @devices[name] = device
         
         response_code = 201 # "Created"
         response_content = '/devices/' + name + ' created'
@@ -213,7 +215,7 @@ module Martinelli
         body = request.body.string
       end
 
-      # messy routing
+      # routing
       if DevicesResourceHandler::route_valid? request_path then
         if DevicesResourceHandler::route_devices_root? request_path then
           case @request_method

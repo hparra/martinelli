@@ -16,6 +16,7 @@ module Martinelli
     #   "port": {String}
     #   "format": "ASCII" | "HEX" ,
     #   "delimeter": {String},
+    #   "mute?": true | false
     #   "baud_rate": [0, 100000],
     #   "data_bits": [6, 8],
     #   "stop_bits": 0 | 1 | 2,
@@ -40,8 +41,8 @@ module Martinelli
       @params["format"] = @params["format"] || "ASCII"
       @params["delimiter"] = @params["delimiter"] || "\r\n"
       
-	  # Part of a hack I want to remove later (win32/ruby1.8)
-	  @params["mute?"] = @params["mute?"] || false
+      # Part of a hack I want to remove later (win32/ruby1.8)
+      @params["mute?"] = @params["mute?"] || false
 	  
       # Maybe we want to leave these as empty strings?
       @params["make"] = @params["make"] || "Unknown Manufacturer"
@@ -61,7 +62,7 @@ module Martinelli
       if @serial_port.nil? then
         # throws ArgumentError, Errno::ENOENT, Errno::EBUSY
         @serial_port = SerialPort.new(@params["port"], @params["baud_rate"], @params["data_bits"], @params["stop_bits"], @params["parity"])
-		@serial_port.read_timeout = 0 # necessary for Win32?
+		    #@serial_port.read_timeout = 0 # necessary for Win32?
         puts @serial_port.modem_params.to_s
       end
     end
@@ -83,11 +84,11 @@ module Martinelli
 			#sleep(0.001) # Why windows needs this, i don't know.
 			# read timeout?
             @buffer = gets
-			Thread.pass
+			      Thread.pass
           end
         end
         @listener.run
-		$log.debug("Creating new thread for " + @params["make"] + " " + @params["model"])
+		    $log.debug("Created new thread for " + @params["make"] + " " + @params["model"])
       end
     end
 
