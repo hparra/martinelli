@@ -274,6 +274,7 @@ module Martinelli
       $log.debug("RESPONSE => " + response_code.to_s + " " + response_body)
       response.start(response_code) do |head, out| # RESPONSE
         head["Content-Type"] = content_type
+        head["Cache-Control"] = "no-store" # versus no-cache
         out << response_body
       end
     end
