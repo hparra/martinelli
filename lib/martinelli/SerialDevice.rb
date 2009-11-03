@@ -43,6 +43,10 @@ module Martinelli
       
       # Part of a hack I want to remove later (win32/ruby1.8)
       @params["mute?"] = @params["mute?"] || false
+      
+      # This will eventually replace mute?
+      @params["buffered"] = @params["buffered"] || true
+      @params["read_timeout"] = @params["read_timeout"] || 0
 	  
       # Maybe we want to leave these as empty strings?
       @params["make"] = @params["make"] || "Unknown Manufacturer"
@@ -57,13 +61,12 @@ module Martinelli
     end
   
     # open connection to device
-    #
+    # throws ArgumentError, Errno::ENOENT, Errno::EBUSY
     def open
       if @serial_port.nil? then
-        # throws ArgumentError, Errno::ENOENT, Errno::EBUSY
         @serial_port = SerialPort.new(@params["port"], @params["baud_rate"], @params["data_bits"], @params["stop_bits"], @params["parity"])
-		    #@serial_port.read_timeout = 0 # necessary for Win32?
-        puts @serial_port.modem_params.to_s
+		    @serial_port.read_timeout = @params["read_timeout"]
+        #puts @serial_port.modem_params.to_s
       end
     end
 
@@ -81,8 +84,7 @@ module Martinelli
       if (@listener.nil?)
         @listener = Thread.new do
           loop do
-			#sleep(0.001) # Why windows needs this, i don't know.
-			# read timeout?
+      			#sleep(0.001) # Why windows needs this, i don't know.
             @buffer = gets
 			      Thread.pass
           end
