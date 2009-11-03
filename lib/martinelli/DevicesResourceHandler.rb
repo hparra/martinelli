@@ -54,8 +54,8 @@ module Martinelli
         
         device = SerialDevice.new(json_params)
         device.open
-		
-        unless device.params['mute?'] then
+
+        if device.params["buffered"] then
           device.listen # FIXME: Blocks under Win32/Ruby1.8. Don't know why
         end
         
@@ -141,7 +141,12 @@ module Martinelli
     # Analogous to GET /devices/{device}
     def read_device(name)
       if @devices.has_key? name then
-        response_content = string_metaencode(@devices[name].buffer, @devices[name].params["format"])
+        if @devices[name].params["buffered"] then
+          data = @devices[name].buffer
+        else
+          data = @devices[name].gets
+        end
+        response_content = string_metaencode(data, @devices[name].params["format"])
         response_code = 200
       else
         response_code = 404
@@ -171,7 +176,7 @@ module Martinelli
         @devices[name].putz input
         
         response_code = 200
-        response_content = body["input"]
+        response_content = body["input"] # loopback
       else
         response_code = 404
         response_content = "No such device"
