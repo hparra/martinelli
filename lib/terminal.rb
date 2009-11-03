@@ -1,5 +1,3 @@
-#! /usr/bin/ruby
-
 # Hector G. Parra
 # hectorparra.com
 

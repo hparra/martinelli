@@ -55,9 +55,8 @@ module Martinelli
         device = SerialDevice.new(json_params)
         device.open
 		
-		    # FIXME: Blocks under Win32/Ruby1.8. Don't know why
         unless device.params['mute?'] then
-          device.listen # returns thread? or should device keep it?
+          device.listen # FIXME: Blocks under Win32/Ruby1.8. Don't know why
         end
         
         @devices[name] = device
@@ -190,7 +189,7 @@ module Martinelli
     # * HOST/devices
     # * HOST/devices/{device_name}
     # Supports overloaded GET and POST through 'method=' query
-    # Supports JSONP through 'format=JSONP&callback=' query
+    # Supports JSONP through 'callback=' query
     # Mongrel calls this method directly
     def process(request, response)
       @request_method = request.params[Mongrel::Const::REQUEST_METHOD]

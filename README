@@ -1,0 +1,106 @@
+Martinelli
+==========
+Hector G. Parra <hector@hectorparra.com>
+
+Martinelli is an HTTP Server that exposes serial port (RS-232/422) devices through a RESTful URI interface.
+
+NOTE: This README is formatted in AsciiDoc (http://powerman.name/doc/asciidoc)
+
+== Requirements
+
+Martinelli is a ruby program based on the Mongrel HTTP server by Zed Shaw. Ruby, ruby gems, and a few gems are required for installation.
+
+=== Installing Ruby & Gems
+
+If you don't already have ruby installed on your computer, please follow one of these tutorials:
+
+* Mac OS X:
+* Microsoft Windows:
+* Ubuntu Linux (TODO)
+
+WARNING: Martinelli does not run on Windows' Ruby 1.9 due to bugs in the serialport dependency. Please use Ruby 1.8
+
+WARNING: There are known problems with 64-bit Ruby 1.9 and serialport.
+
+If you already have ruby and ruby gems installed, be sure to update to the latest ruby gems version:
+
+	sudo gem update --system
+
+
+=== Installing Dependencies
+
+Once you have ruby and ruby gems installed and updated please continue with the following instructions:
+
+NOTE: Eliminate the 'sudo' command if you wish to install the gem in your local directory or you are on a Windows system
+
+Install Mongrel:
+
+	sudo gem install mongrel
+
+Install JSON:
+	
+	sudo gem install json
+
+Install serialport:
+
+	sudo gem install serialport -s http://gemcutter.org
+
+
+== Installation
+
+There are currently two methods to install Martinelli: from a compressed archive (from which you are probably reading this file), or Github (if you have access)
+
+=== Installing from archive
+
+Uncompress the Martinelli archive into an appropriate directory.
+
+=== Installing from GitHub
+
+Assuming you already have Git installed:
+
+	git clone git@github.com:hparra/martinelli.git
+
+
+== Configuration
+
+Even though you can initialize serial devices through Martinelli's interface it also offers a system to preload devices.
+
+The 'config' directory houses configuration files in JSON format, one for each device. Examples are located in the 'examples' folder within this directory. Let's examine one now:
+
+	{
+		"name": "Healthometer_349KLX",
+		"format": "HEX",
+		"delimiter": "\r",
+		"port": "\/dev\/tty.usbserial",
+		"baud_rate": 2400,
+		"data_bits": 8,
+		"stop_bits": 1,
+		"make": "Healthometer",
+		"model": "349KLX",
+		"description": "Remote Display Scale",
+		"details": {
+			"capacity": "400 lbs",
+			"increment": "0.2 lb",
+			"platform": "13.5 in x 11.6 in",
+			"power_supply": "9V battery"
+		}
+	}
+
+* name: the device identifier that completes the URI e.g. http://server/devices/Healthometer_349KLX
+* format: metaencoding of data sent and received from device
+* delimeter:
+* baud_rate: the baud rate of the device
+* data_bits: the number of data bits
+* stop_bits: the number of stop bits
+* parity: the code for parity selection: 0 = NONE, 1 = ODD, 2 = EVEN
+* make: the brand of the device (optional)
+* model: the model number or name of the device (optional)
+* descriptions: a sentence or paragraph describing the device (optional)
+* details: a JSON object describing user-defined details about the device (optional)
+
+
+== Resources
+ 
+* serialport: http://github.com/hparra/ruby-serialport
+* Mongrel: http://mongrel.rubyforge.org/
+* JSON: http://flori.github.com/json/
