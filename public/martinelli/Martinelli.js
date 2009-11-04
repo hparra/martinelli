@@ -1,4 +1,70 @@
-Martinelli = {
+// Singleton
+Martinelli = function(martinelli_uri) {
+	// check to see if URI really points to a martinelli server
+	// return nil or throw exception if not
+	// else
+	var server_uri = martinelli_uri;
+	
+	return {
+		getDevices: function() {
+			return; // server_uri/devices AS OBJECT
+		},
+		getDevice: function(device_name) {
+			// check that it exists. if it doesn't: exception or nil
+			return; // SerialDevice Object
+		}
+		createDevice: function(params) {
+			// check that it exists. if it does: exception or nil
+			return SerialDevice(params);
+		},
+		deleteDevice: function() {
+			return;
+		}
+	};
+};
+
+// Power Constructor
+function SerialDevice(params) {
+	var self = new Object();
+
+	self.read = function() {
+		output = "";
+		return output;
+	};
+	
+	self.write = function(input) {};
+
+	return self;
+};
+
+/*
+
+Example usage:
+
+my_server = Martinelli("http://some_uri:5000")
+
+my_device = my_server.createDevice({
+	"name": "blah",
+	"baud_rate": 9600,
+	"port": "COM1"
+});
+
+// infinite event-based loop
+addEventListener("READ_EVENT", function() {
+	my_device.write("13 A2", function() {
+		alert(my_device.read(function() {
+			dispatchEvent("READ_EVENT");
+		}));
+	};
+}
+
+// starts loop
+dispatchEvent("READ_EVENT");
+
+*/
+
+
+Martinelli = {	
 	initialize: function(device, uri) {
 		var device_name = device;
 		var serverLocation = "/";
