@@ -317,7 +317,7 @@ module Martinelli
     def string_metaencode(text, metaencoding)
       case metaencoding
       when "ASCII"
-        encoded_string = text
+        encoded_string = clean_ascii(text)
       when "HEX"
         encoded_string = text.unpack("H*").pop
       when "BIN"
@@ -327,6 +327,17 @@ module Martinelli
       end
       $log.debug("Metaencode: " + text.inspect + " => " + encoded_string.inspect)
       return encoded_string
+    end
+
+    # Takes an ASCII string and removes non-printable characters from it
+    def clean_ascii(text)
+      cleaned = ""
+      text.each_byte do |i|
+        if (i >= 32 && i <= 127) || (i >= 0x7 && i <= 0xD) then
+          cleaned += i.chr
+        end
+      end
+      return cleaned
     end
 
     #

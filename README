@@ -14,13 +14,15 @@ Martinelli is a ruby program based on the Mongrel HTTP server by Zed Shaw. Ruby,
 
 If you don't already have ruby installed on your computer, please follow one of these tutorials:
 
-* Mac OS X:
-* Microsoft Windows:
-* Ubuntu Linux (TODO)
+* Mac OS X: http://telios.tumblr.com/post/236594626/
+* Microsoft Windows: http://telios.tumblr.com/post/236587136/
+* Ubuntu Linux: http://telios.tumblr.com/post/236604939/
 
 WARNING: Martinelli does not run on Windows' Ruby 1.9 due to bugs in the serialport dependency. Please use Ruby 1.8
 
 WARNING: There are known problems with 64-bit Ruby 1.9 and serialport.
+
+WARNING: Mongrel has problems on Windows Vista. A DNS lookup causes unusually slow HTTP response times (~1s). If you are not running in buffered mode and have a device that continuously outputs data then your HTTP requests will be slower than the serialport buffer, resulting in a useless system.
 
 If you already have ruby and ruby gems installed, be sure to update to the latest ruby gems version:
 
@@ -61,9 +63,22 @@ Assuming you already have Git installed:
 	git clone git@github.com:hparra/martinelli.git
 
 
+== Execution
+
+On POSIX systems, from the martinelli directory:
+
+	bin/martinelli
+
+On Windows systems, from the martinelli directory:
+
+	ruby bin/martinelli
+
+WARNING: On Windows systems, a threading bug will force you to close martinelli by killing the ruby.exe process in System Monitor
+
+
 == Configuration
 
-Even though you can initialize serial devices through Martinelli's interface it also offers a system to preload devices.
+Even though you can initialize serial devices through Martinelli's interface it also offers a system to preload devices at runtime. If you edit such files, you should restart the server to load the changes.
 
 The 'config' directory houses configuration files in JSON format, one for each device. Examples are located in the 'examples' folder within this directory. Let's examine one now:
 
@@ -88,7 +103,7 @@ The 'config' directory houses configuration files in JSON format, one for each d
 
 * name: the device identifier that completes the URI e.g. http://server/devices/Healthometer_349KLX
 * format: metaencoding of data sent and received from device
-* delimeter:
+* delimeter: the value that represents the end of the command
 * baud_rate: the baud rate of the device
 * data_bits: the number of data bits
 * stop_bits: the number of stop bits
