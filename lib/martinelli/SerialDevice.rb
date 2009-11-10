@@ -113,17 +113,14 @@ module Martinelli
     end
     
     def getc
-      raise IOError, "Device listener thread running", caller if @listener
       return @serial_port.getc
     end
     
     def gets
-      raise IOError, "Device listener thread running", caller if @listener
       return @serial_port.gets(@params["delimiter"])
     end
     
     def getz
-      raise IOError, "Device listener thread running", caller if @listener
       s = ""
       loop do
         c = @serial_port.getc
