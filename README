@@ -78,9 +78,9 @@ WARNING: On Windows systems, a threading bug will force you to close martinelli 
 
 == Configuration
 
-Even though you can initialize serial devices through Martinelli's interface it also offers a system to preload devices at runtime. If you edit such files, you should restart the server to load the changes.
+Besides initializing serial devices through Martinelli's RESTful interface you can also do so by specifying server config files to preload devices at runtime. If you edit such files, you should restart the server to load the changes.
 
-The 'config' directory houses configuration files in JSON format, one for each device. Examples are located in the 'examples' folder within this directory. Let's examine one now:
+The 'config' directory houses configuration files in JSON format with the .json extension, one for each device. Examples are located in the 'examples' folder within this directory. Let's examine one now:
 
 	{
 		"name": "Healthometer_349KLX",
@@ -103,7 +103,7 @@ The 'config' directory houses configuration files in JSON format, one for each d
 
 * name: the device identifier that completes the URI e.g. http://server/devices/Healthometer_349KLX
 * format: metaencoding of data sent and received from device
-* delimeter: the value that represents the end of the command
+* delimiter: the value that represents the end of data
 * baud_rate: the baud rate of the device
 * data_bits: the number of data bits
 * stop_bits: the number of stop bits
@@ -112,6 +112,9 @@ The 'config' directory houses configuration files in JSON format, one for each d
 * model: the model number or name of the device (optional)
 * descriptions: a sentence or paragraph describing the device (optional)
 * details: a JSON object describing user-defined details about the device (optional)
+
+=== Examples
+
 
 
 == Resources
