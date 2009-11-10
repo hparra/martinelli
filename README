@@ -2,9 +2,20 @@ Martinelli
 ==========
 Hector G. Parra <hector@hectorparra.com>
 
-Martinelli is an HTTP Server that exposes serial port (RS-232/422) devices through a RESTful URI interface.
+Martinelli is an HTTP Server that exposes serial port (RS-232/422) devices as a RESTful web service.
 
 NOTE: This README is formatted in AsciiDoc (http://powerman.name/doc/asciidoc)
+
+
+== Table of Contents
+
+* Requirements
+* Installation
+* Execution
+* Configuration
+* Applications
+* Resources
+
 
 == Requirements
 
@@ -27,7 +38,6 @@ WARNING: Mongrel has problems on Windows Vista. A DNS lookup causes unusually sl
 If you already have ruby and ruby gems installed, be sure to update to the latest ruby gems version:
 
 	sudo gem update --system
-
 
 === Installing Dependencies
 
@@ -65,22 +75,26 @@ Assuming you already have Git installed:
 
 == Execution
 
-On POSIX systems, from the martinelli directory:
+On POSIX systems, from the martinelli/ directory:
 
 	bin/martinelli
 
-On Windows systems, from the martinelli directory:
+On Windows systems, from the martinelli/ directory:
 
 	ruby bin/martinelli
 
-WARNING: On Windows systems, a threading bug will force you to close martinelli by killing the ruby.exe process in System Monitor
+WARNING: On Windows systems, a threading bug will force you to close Martinelli by killing the ruby.exe process in System Monitor
+
+Once the system is running, you can experiment with Martinelli using the testing application:
+
+	http://localhost:5000/apps/testing/
 
 
 == Configuration
 
 Even though you can initialize serial devices through Martinelli's interface it also offers a system to preload devices at runtime. If you edit such files, you should restart the server to load the changes.
 
-The 'config' directory houses configuration files in JSON format, one for each device. Examples are located in the 'examples' folder within this directory. Let's examine one now:
+The martinelli/config/ directory houses configuration files in JSON format, one for each device. Examples are located in the 'examples' folder within this directory. Let's examine one now:
 
 	{
 		"name": "Healthometer_349KLX",
@@ -101,8 +115,8 @@ The 'config' directory houses configuration files in JSON format, one for each d
 		}
 	}
 
-* name: the device identifier that completes the URI e.g. http://server/devices/Healthometer_349KLX
-* format: metaencoding of data sent and received from device
+* name: the device identifier that completes the URI e.g. http://localhost:5000/devices/Healthometer_349KLX
+* format: metaencoding of data sent and received from device e.g. "HEX", "ASCII", "BINARY"
 * delimeter: the value that represents the end of the command
 * baud_rate: the baud rate of the device
 * data_bits: the number of data bits
@@ -114,8 +128,28 @@ The 'config' directory houses configuration files in JSON format, one for each d
 * details: a JSON object describing user-defined details about the device (optional)
 
 
+== Applications
+
+Since Martinelli represents serial devices through a RESTful HTTP resources, you can use just about any programming language and framework to build useful applications, including simple HTML and JavaScript. Using a JavaScript library like jQuery (http://jquery.com/) will make certain aspects of development, such as AJAX requests, easier.
+
+Martinelli includes a directory, martinelli/public/, which can host your own web applications. Files in this directory are served through:
+
+	http://localhost:5000/apps/
+
+=== Examples
+
+http://marco.calit2.uci.edu/conglomo/WeightScaleNew/ Is a web application that interacts with the Healthometer 349KLX Weight Scale
+
+=== Development Guidelines
+
+A user should be able to specify the location of the martinelli server at runtime through the UI or a configuration file. For example, a web application may include a parameter in the query string of the URL e.g. http://my_server/my_application.html?martinelli_uri=http://192.168.1.100:5000
+
+
 == Resources
- 
+
+The following are links to Martinelli related resources, including authors, dependencies, and standards.
+
+* Telios: http://telios.calit2.uci.edu
 * serialport: http://github.com/hparra/ruby-serialport
 * Mongrel: http://mongrel.rubyforge.org/
-* JSON: http://flori.github.com/json/
+* Ruby JSON: http://flori.github.com/json/
