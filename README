@@ -2,9 +2,20 @@ Martinelli
 ==========
 Hector G. Parra <hector@hectorparra.com>
 
-Martinelli is an HTTP Server that exposes serial port (RS-232/422) devices through a RESTful URI interface.
+Martinelli is an HTTP Server that exposes serial port (RS-232/422) devices as a RESTful web service.
 
 NOTE: This README is formatted in AsciiDoc (http://powerman.name/doc/asciidoc)
+
+
+== Table of Contents
+
+* Requirements
+* Installation
+* Execution
+* Configuration
+* Applications
+* Resources
+
 
 == Requirements
 
@@ -22,12 +33,11 @@ WARNING: Martinelli does not run on Windows' Ruby 1.9 due to bugs in the serialp
 
 WARNING: There are known problems with 64-bit Ruby 1.9 and serialport.
 
-WARNING: Mongrel has problems on Windows Vista. A DNS lookup causes unusually slow HTTP response times (~1s). If you are not running in buffered mode and have a device that continuously outputs data then your HTTP requests will be slower than the serialport buffer, resulting in a useless system.
+WARNING: Mongrel has problems on Windows Vista. A DNS lookup causes unusually slow HTTP response times (~1s). If you are not running in buffered mode and have a device that continuously outputs data then your HTTP requests will be slower than the serial port buffer, resulting in a useless system.
 
 If you already have ruby and ruby gems installed, be sure to update to the latest ruby gems version:
 
 	sudo gem update --system
-
 
 === Installing Dependencies
 
@@ -65,15 +75,19 @@ Assuming you already have Git installed:
 
 == Execution
 
-On POSIX systems, from the martinelli directory:
+On POSIX systems, from the martinelli/ directory:
 
 	bin/martinelli
 
-On Windows systems, from the martinelli directory:
+On Windows systems, from the martinelli/ directory:
 
 	ruby bin/martinelli
 
-WARNING: On Windows systems, a threading bug will force you to close martinelli by killing the ruby.exe process in System Monitor
+WARNING: On Windows systems, a threading bug will force you to close Martinelli by killing the ruby.exe process in System Monitor
+
+Once the system is running, you can experiment with Martinelli using the testing application:
+
+	http://localhost:5000/apps/testing/
 
 
 == Configuration
@@ -90,6 +104,7 @@ The 'config' directory houses configuration files in JSON format with the .json 
 		"baud_rate": 2400,
 		"data_bits": 8,
 		"stop_bits": 1,
+		"buffered", true,
 		"make": "Healthometer",
 		"model": "349KLX",
 		"description": "Remote Display Scale",
@@ -101,24 +116,187 @@ The 'config' directory houses configuration files in JSON format with the .json 
 		}
 	}
 
-* name: the device identifier that completes the URI e.g. http://server/devices/Healthometer_349KLX
-* format: metaencoding of data sent and received from device
-* delimiter: the value that represents the end of data
-* baud_rate: the baud rate of the device
-* data_bits: the number of data bits
-* stop_bits: the number of stop bits
-* parity: the code for parity selection: 0 = NONE, 1 = ODD, 2 = EVEN
-* make: the brand of the device (optional)
-* model: the model number or name of the device (optional)
-* descriptions: a sentence or paragraph describing the device (optional)
-* details: a JSON object describing user-defined details about the device (optional)
+=== name : String
+
+Default: null (required if using config file)
+
+"name" is the device identifier that completes the URI e.g. http://server/devices/Healthometer_349KLX. This should be an alphanumeric key that contains no spaces.
+
+
+=== format : String => ("HEX" | "ASCII" | "BINARY")
+
+Default: "ASCII"
+
+"format" identifies how the binary data from and to the device should be interpreted and coded by Martinelli. For example, a device may return data as valid ASCII, and it should be forwarded as such, with any non-printable ASCII purged. On the other hand, a device may accept a byte-long instruction which you can specify with BINARY as the string "11010011" or HEX as the string "D3".
+
+
+=== delimiter : String
+
+Default: "\n\r"
+
+"delimiter" represents the piece of data the device uses to signals the end of a part. For ASCII-driven devices, this is usually "\n\r" (carriage return + line feed or CRLF), or just "\r" (LF). Binary-driven devices usually use hexadecimal "FF" or "OD".
+
+
+=== port : String
+
+Default: null (required)
+
+POSIX: valid /dev/ path e.g. "/dev/ttyUSB0"
+Windows: ("COM1", "COM2", "COM3", ...)
+
+"port" represents the port identifier for the device, which will be a DEVFS path for POSIX system or "COM1", etc. for Windows systems.
+
+
+=== baud_rate : Integer
+
+Default: 2400
+
+"baud_rate" represents the baud rate of the device.
+
+
+=== data_bits : Integer
+
+Default: 1
+
+"data_bits" represents the number of data bits
+
+
+=== stop_bits : Integer 
+
+Default: 0
+
+"stop_bits" represents the number of stop bits
+
+
+=== parity : Integer
+
+{0 = NONE, 1 = ODD, 2 = EVEN}
+
+Default: 0
+
+"parity" represents the numerical code that specifies the type of parity for the device
+
+
+=== buffered : Boolean
+
+Default: false
+
+"buffered" represents whether or not data is buffered in Martinelli by a continuous reading of the device.
+
+When "buffered" is true, a separate thread continuously reads from the device using the specified delimiter and stores the value in a buffer to be read by an HTTP GET command. At this moment, the buffer is only one value long. Work on a time-based circular buffer is ongoing. The goal of this work is to effectively create a multicast-style pattern for serial device communication.
+
+When "buffered" is false, data is read from the device when an HTTP GET command is received. This effectively creates a unicast communication pattern, since multiple clients will receive different data, and subsequent requests may change the state of the device. Future options to the GET command or the configuration schema may change how data can be retrieved from the devices/OSs own buffer.
+
+
+=== make : String
+
+Default: null (optional)
+
+"make" is the brand of the device 
+
+
+=== model : String
+
+Default: null (optional)
+
+"model" is the model number or name of the device 
+
+
+=== description : String
+
+Default: null (optional)
+
+"description" is a sentence or paragraph describing the device. This information may be used for searching features in future releases.
+
+
+=== details : JSON
+
+Default: null (optional)
+
+"details" is a JSON object describing user-defined details about the device (optional)
+
+
+== Applications
+
+Since Martinelli represents serial devices through a RESTful HTTP resources, you can use just about any programming language and framework to build useful applications, including simple HTML and JavaScript. Using a JavaScript library like jQuery (http://jquery.com/) will make certain aspects of development, such as AJAX requests, easier.
+
+Martinelli includes a directory, martinelli/public/, which can host your own web applications. Files in this directory are served through:
+
+	http://localhost:5000/apps/
 
 === Examples
 
+http://marco.calit2.uci.edu/conglomo/WeightScaleNew/ is a web application that interacts with the Healthometer 349KLX Weight Scale. It assumes Martinelli is at http://localhost:5000 unless you specify the martinelli_uri parameter (see below).
+
+=== Development Guidelines
+
+A user should be able to specify the location of the martinelli server at runtime through the UI or a configuration file. For example, a web application may include a parameter in the query string of the URL e.g. http://my_server/my_application.html?martinelli_uri=http://192.168.1.100:5000
+
+
+== Usage
+
+Martinelli is a REST-inspired (http://en.wikipedia.org/wiki/Representational_State_Transfer) web service. There are some violations in the model e.g. HEAD is redefined to send resource metadata. All request and response data is formatted in JSON.
+
+All responses except GET /devices/ have the following JSON format:
+
+{
+  "response": "example response"
+}
+
+=== GET /devices/
+
+200 OK
+Returns JSON of all available devices and their metadata
+
+
+=== GET /devices/some_device/
+
+200 OK
+Returns device data according to the device's format, delimiter, and buffered mode
+
+404 Not Found
+Device resource does not exist
+
+
+=== PUT /devices/some_device/
+
+201 Created
+Device connection has been initialized and the resource has been created
+
+400 Bad Request
+Parameters are bad due to an inexistent port, malformed JSON, etc.
+
+409 Conflict
+Device port or URI is already in use
+
+500 Internal Server Error
+An unknown error occurred
+
+
+=== POST /devices/some_device/
+
+200 OK
+Data was written to device
+
+404 Not Found
+Device resource does not exist
+
+
+=== DELETE
+
+200 OK
+Device connection has been closed and resources has been deleted
+
+404 Not Found
+Device resource does not exist
 
 
 == Resources
- 
+
+The following are links to Martinelli related resources, including authors, dependencies, and standards.
+
+* REST: http://en.wikipedia.org/wiki/Representational_State_Transfer
+* Telios: http://telios.calit2.uci.edu
 * serialport: http://github.com/hparra/ruby-serialport
 * Mongrel: http://mongrel.rubyforge.org/
-* JSON: http://flori.github.com/json/
+* Ruby JSON: http://flori.github.com/json/

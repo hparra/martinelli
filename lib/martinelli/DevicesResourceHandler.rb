@@ -27,6 +27,7 @@ module Martinelli
     
     # Reads devices hash table
     # Returns list of devices as JSON
+    # * 200
     # Analogous GET /devices
     def read_devices
       return 200, @devices.to_json
@@ -36,8 +37,8 @@ module Martinelli
     # Returns HTTP Response Code as Integer and Response as JSON
     # * 201 if SerialDevice initialized
     # * 409 if SerialDevice port or URI is already in use
-    # * 400 if SerialDevice parameters are bad due to unexistant port, malformed JSON, etc.
-    # * 500 if an unknown error occured
+    # * 400 if SerialDevice parameters are bad due to inexistant port, malformed JSON, etc.
+    # * 500 if an unknown error occurred
     # Analogous to PUT /devices/{device}
     def create_device(name, json_params)
       begin
