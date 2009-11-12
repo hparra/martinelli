@@ -1,0 +1,6 @@
+Cherry (2009-11-11)
+* REST-inspired resource architecture
+* JSON format request/response
+* JSONP support
+* Firebug-dependent Testing WebApp
+* Experimental Martinelli.js
