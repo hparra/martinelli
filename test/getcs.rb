@@ -1,5 +1,6 @@
 # Hector G. Parra
 # hectorparra.com
+$LOAD_PATH.unshift "#{File.dirname(__FILE__)}/../lib"
 
 require 'rubygems'
 require 'serialport'
@@ -8,16 +9,13 @@ require 'json'
 require 'martinelli/SerialDevice'
 require 'martinelli/Helpers'
 
-# USAGE
-# ruby SerialDeviceTest.rb port baud_rate data_bits stop_bits parity
 
 params = {
-  "port" => ARGV[0].to_s, # required
-  "baud_rate" => ARGV[1].to_i || 2400,
-  "data_bits" => ARGV[2] || 8,
-  "stop_bits" => ARGV[3] || 1,
-  "parity" => ARGV[4].to_i || SerialPort::NONE,
-  "delimiter" => ARGV[5] || "\r\n"
+  "port" => "/dev/tty.usbserial",
+  "baud_rate" => 9600,
+  "data_bits" => 8,
+  "stop_bits" => 1,
+  "parity" => SerialPort::NONE
 }.to_json
 
 # create connection
@@ -35,16 +33,8 @@ begin
     # reading
     t = Thread.new do
       loop do
-        tty.printf("%c", sp.getc)
+        tty.printf("%s", sp.getcs(10))
         puts "\n"
-        #tty.printf("%X", sp.getc)            # output data
-        # TODO: Print hex if HEX, etc
-        # if(params["format"].to_s.upcase == "HEX")
-        #   tty.printf("%s", sp.gets.to_i(16))
-        # else
-        #   #TODO FIX THIS PROBLEM WITH GETC
-        #   tty.printf("%s", sp.gets)
-        # end
       end
     end
     

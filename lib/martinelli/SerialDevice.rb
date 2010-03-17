@@ -19,7 +19,8 @@ module Martinelli
     # {
     #   "port": {String}
     #   "format": "ASCII" | "HEX" ,
-    #   "delimeter": {String},
+    #   "delimiter": {String},
+    #   "size": {Integer}
     #   "buffered": true | false
     #   "baud_rate": [0, 100000],
     #   "data_bits": [6, 8],
@@ -43,10 +44,15 @@ module Martinelli
       @params["parity"] = @params["parity"] || 0
       
       @params["format"] = @params["format"] || "ASCII"
-      @params["delimiter"] = @params["delimiter"] || "\r\n"
+
+      # these may be nil! either one of the other has to be defined but not both
+      #@params["delimiter"] = @params["delimiter"] #|| "\r\n"
+      #@params["size"] = @params["size"]
+
       @params["buffered"] = @params["buffered"] && true # tricky
       @params["read_timeout"] = @params["read_timeout"] || 0
 	    puts "TIMEOUT" + @params["read_timeout"].to_s
+	    
       @params["make"] = @params["make"] || "Unknown Manufacturer"
       @params["model"] = @params["model"] || "Unknown Model"
       @params["description"] = @params["description"] || "No Description"
@@ -84,7 +90,7 @@ module Martinelli
         @listener = Thread.new do
           loop do
       			#sleep(0.001) # Why windows needs this, i don't know.
-            @buffer = gets
+            @buffer = getd
 			      Thread.pass
           end
         end
@@ -112,14 +118,38 @@ module Martinelli
       @serial_port.flush
     end
     
+    # "get character" a character
     def getc
       return @serial_port.getc
     end
     
+    # "get characters" a string of n characters
+    def getcs(n = 1)
+      s = ""
+      n.times do
+        s += getc
+      end
+      return s
+    end
+    
+    # TODO: abstract @params["delimiter"] out. Check tests first
+    # "get string" a string terminated by specified delimeter
     def gets
       return @serial_port.gets(@params["delimiter"])
     end
+
+    # "get data" a string representing device data according to rule
+    def getd
+      if @params["delimiter"] != nil then # defined? kept jumping into first case! WTF?
+        gets
+      elsif @params["size"] != nil
+        getcs(@params["size"])
+      else
+        puts "Serious Error!" # TODO: use proper exception
+      end
+    end
     
+    # deprecate?
     def getz
       s = ""
       loop do

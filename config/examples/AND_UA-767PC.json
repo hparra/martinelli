@@ -1,0 +1,14 @@
+{
+	"name": "AND_UA-767PC",
+	"format": "ASCII",
+	"size": 10,
+	"port": "\/dev\/tty.usbserial",
+	"baud_rate": 9600,
+	"data_bits": 8,
+	"stop_bits": 1,
+	"make": "AND",
+	"model": "UA-767PC",
+	"description": "Digital Blood Pressure Monitor",
+	"details": {
+	}
+}

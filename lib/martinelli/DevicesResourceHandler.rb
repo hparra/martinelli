@@ -145,7 +145,7 @@ module Martinelli
         if @devices[name].params["buffered"] then
           data = @devices[name].buffer
         else
-          data = @devices[name].gets
+          data = @devices[name].getd
         end
         response_content = string_metaencode(data, @devices[name].params["format"])
         response_code = 200
