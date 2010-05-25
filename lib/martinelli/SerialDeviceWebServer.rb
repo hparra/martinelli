@@ -19,10 +19,13 @@ module Martinelli
     #
     def initialize(host = "0.0.0.0", port = 5000)
       @server = Mongrel::HttpServer.new(host, port)
-      @server.register("/apps", Mongrel::DirHandler.new("public", false))
-      @server.register("/testing", Mongrel::DirHandler.new("public/testing", false))      
       @devices_handler = DevicesResourceHandler.new
       @server.register("/devices", @devices_handler)
+
+      @server.register("/apps", Mongrel::DirHandler.new("public", false))
+      @server.register("/vendor", Mongrel::DirHandler.new("public/vendor", false))
+      @server.register("/testing", Mongrel::DirHandler.new("public/testing", false))      
+
     end
 
     #

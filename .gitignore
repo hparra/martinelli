@@ -2,3 +2,4 @@ nbproject/*
 .project
 .DS_Store
 config/*.json
+public/vendor/*

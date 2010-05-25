@@ -1,6 +1,7 @@
 {
 	"name": "accelerometer",
 	"delimiter": "\r\n",
+	"buffered": true,
 	"port": "/dev/tty.usbserial-A8003VSz",
 	"baud_rate": 2400,
 	"data_bits": 8,
